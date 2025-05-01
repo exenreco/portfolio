@@ -61,7 +61,7 @@ export class GoogleMapComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     // Access map instance after view init
-    console.log(this.map.googleMap);
+    //console.log(this.map.googleMap);
   }
 
   onMarkerClick(marker: Marker, mapMouseEvent: google.maps.MapMouseEvent) {
