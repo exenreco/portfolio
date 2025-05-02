@@ -1,15 +1,126 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, RouterModule } from '@angular/router';
-import { SearchService } from '../search.service';
+import { SearchService } from './search.service';
 import { NgSwitch, NgFor, NgIf, NgSwitchCase } from '@angular/common';
-import { TruncatePipe } from '../truncate.pipe';
+import { TruncatePipe } from './truncate.pipe';
 
 @Component({
   selector: 'app-search',
   standalone: true,
   imports: [ CommonModule, RouterLink, RouterModule, NgFor, NgIf, NgSwitch, NgSwitchCase, TruncatePipe],
   styles: `
+    .results-text.grid,
+    .results-list.grid,
+    .filter-options {
+      margin: auto;
+      padding: .4em;
+      width: calc( 98% - .8em);
+      max-width: calc(1440px - .8em);
+    }
+    .filter-options {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-items: center;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .filter-options .grid.header {
+      margin: auto;
+      cursor: pointer;
+      font-style: italic;
+      color: var(--text-color, #fff);
+      background: var(--primary-shade-color, #000);
+    }
+    .filter-options .grid.header .row {
+      align-items: center;
+      justify-items: center;
+      justify-content: center;
+    }
+    .filter-options .grid.header .row .left,
+    .filter-options .grid.header .row .right {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-items: center;
+      justify-content: center;
+    }
+    .filter-options .grid.header .row .left {
+      justify-items: left;
+      justify-content: left;
+      width: calc(100% - 2em);
+    }
+    .filter-options .grid.header .row .right {
+      width: 2em;
+      height: 2em;
+    }
+    .filter-options .grid.options {
+      color: var(--text-color, #fff);
+      background: var(--primary-color, #333);
+    }
+    .filter-options .grid.options * {
+      color: var(--text-color, #fff);
+    }
+    .filter-options:has(.row.trigger.open) .grid.options {
+      display: flex;
+      visibility: visible;
+    }
+    .filter-options:has(.row.trigger.close) .grid.options {
+      display: none;
+      visibility: hidden;
+    }
+    .toggle {
+      display: flex;
+      justify-content: space-between;
+    }
+    .toggle p {
+      font-size: .925rem;
+      font-family: "Poppins", sans-serif;
+      font-weight: 500;
+      margin-top: 14px;
+      margin-bottom: 20px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 55px;
+      height: 25px;
+      top: 8px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--accent-color-tertiary, #fff);
+      transition: 0.4s;
+      border-radius: 50px;
+    }
+    .slider:before {
+      left: 2px;
+      bottom: 2px;
+      content: "";
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      border-radius: 50%;
+      background-color: #fff;
+      border: 1px solid var(--primary-shade-color, #333);
+      transition: 0.4s;
+    }
+    input:checked + .slider:before {
+      transform: translateX(calc(100% - -6px));
+      background-color: var(--primary-shade-color, #333);
+    }
+
     .result-card {
       margin: 1rem 0;
       padding: 1.5rem;
@@ -59,20 +170,42 @@ import { TruncatePipe } from '../truncate.pipe';
     }
   `,
   template: `
-    <section class="page-wrapper">
-      <h1 class="page-title">Search Results for "{{ searchTerm }}"</h1>
+    <section class="page search-results">
+      <h1 class="page-title">Search Results</h1>
 
-      <div class="search-results">
-        <div class="filters">
-          <label *ngFor="let type of searchTypes">
-            <input type="checkbox"
-                  [checked]="selectedTypes.has(type)"
-                  (change)="toggleType(type)">
-            {{ type | titlecase }}
-          </label>
+      <div class="grid results-text">
+        <div class="column">
+        <p style="font-style:italic;border-bottom: .2em solid #333;">Search results for "<strong>{{ searchTerm }}</strong>"</p>
         </div>
+      </div>
 
-        <div class="results-list">
+      <div class="filter-options">
+        <div class="grid header">
+          <div (click)="toggleFilter()" [ngClass]="{'open': isOpen, 'closed': !isOpen}" class="row trigger">
+            <div class="left">
+              <span class="icon"><i class="fa-solid fa-list"></i></span>
+              <span class="text">Filters</span>
+            </div>
+            <div class="right" [ngStyle]="{'rotate': isOpen ? '180deg' : '0deg'}">
+              <span class="icon indicator"><i class="fa-solid fa-chevron-down"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="grid options" [ngStyle]="{'display': isOpen ? 'block' : 'none'}">
+          <div class="column">
+            <span *ngFor="let type of searchTypes" class="toggle">
+              <p>{{ type | titlecase }}</p>
+              <label class="switch">
+                <input type="checkbox" [checked]="selectedTypes.has(type)"(change)="toggleType(type)">
+                <span class="slider round"></span>
+              </label>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-list grid">
+        <div class="column">
           <div *ngFor="let item of filteredResults"
               class="result-card"
               [ngSwitch]="item.type">
@@ -116,10 +249,12 @@ import { TruncatePipe } from '../truncate.pipe';
           </div>
         </div>
       </div>
+
     </section>
   `
 })
 export class SearchComponent implements OnInit {
+  isOpen = false;
   searchTerm = '';
   results: any[] = [];
   selectedTypes = new Set<string>(['project', 'blog', 'skill', 'page']);
@@ -142,7 +277,9 @@ export class SearchComponent implements OnInit {
       this.results = this.searchService.search(this.searchTerm);
     });
   }
-
+  toggleFilter(): void {
+    this.isOpen = !this.isOpen;
+  }
   toggleType(type: string) {
     if (this.selectedTypes.has(type)) {
       this.selectedTypes.delete(type);

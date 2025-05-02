@@ -6,7 +6,6 @@
   /*.site-header, .site-content, .site-footer,
   .site-header *, .site-content *, .site-footer * { outline: 1px solid greenyellow;}*/
 
-
   /* Flex items
   **************************************************************************/
   .site-header,
@@ -36,9 +35,16 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
   .site-header {
+    margin: 0;
+    padding: 0;
     z-index: 20;
+    outline: none;
+    border: none;
+    box-shadow: none;
+    position: relative;
     align-items: center;
     justify-items: center;
+    box-sizing: border-box;
     flex-direction: column;
     justify-content: center;
     color: var(--text-color, #fff);
@@ -112,7 +118,7 @@
     visibility: hidden;
   }
   .site-header .content .menu {
-    width: calc(100% - 23.65em);
+    width: calc(100% - 25em);
     flex-direction: row;
   }
   .site-header .content .menu .navigation {
@@ -227,14 +233,16 @@
   /* Site content style rules
   **************************************************************************/
   .site-content {
+    padding: 0;
     z-index: 10;
     margin: auto;
     height: auto;
+    width: 100%;
     max-height: none;
-    width: calc(100%);
-    max-height: none;
+    max-height: 100%;
     min-height: 100vh;
     margin-bottom: 320px;
+    box-sizing: border-box;
     background: var(--accent-color-tertiary, #fff);
     transition: margin-top 0.3s ease;
     border-bottom: .4em solid var(--accent-color-primary, #333);
@@ -541,6 +549,10 @@
       min-height: none;
       z-index: initial;
       position: relative;
+    }
+    .site-footer .bottom {
+      height: auto;
+      padding: 1em 0 1em 0;
     }
     .site-footer .bottom .wrapper {
       flex-direction: column-reverse;

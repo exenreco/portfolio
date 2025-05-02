@@ -316,10 +316,11 @@ register(); // Register Swiper web components
     }
     swiper-slide .content .text .heading {
       width: 100%;
-      text-align: left;
+      text-align: center;
       margin-bottom: .6em;
       font-size: 2.252rem;
       font-weight: bolder;
+      text-decorations: none;
       text-transform: uppercase;
       border-bottom: 0.2em solid var(--tertiary-color, orange);
     }
@@ -350,6 +351,8 @@ register(); // Register Swiper web components
       font-size: 1.925rem;
       font-weight: bolder;
       text-transform: uppercase;
+      text-decoration: underline;
+      border-bottom: none;
     }
     .home-section .text {
       font-size: 1.225rem;

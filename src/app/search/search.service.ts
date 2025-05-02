@@ -45,17 +45,38 @@ export class SearchService {
     {
       id: 5,
       type: 'page',
-      title: 'About Me',
-      content: 'Learn more about my background and experience...',
-      url: '/about'
+      title: 'Home',
+      content: '',
+      url: '/home'
+    },
+    {
+      id: 7,
+      type: 'page',
+      title: 'Projects',
+      content: '',
+      url: '/projects'
     },
     {
       id: 6,
       type: 'page',
-      title: 'Home',
-      content: 'Learn more about my background and experience...',
-      url: '/home'
-    }
+      title: 'Resume',
+      content: 'Web developer with an Information Technology degree...',
+      url: '/resume'
+    },
+    {
+      id: 8,
+      type: 'page',
+      title: 'About',
+      content: '',
+      url: '/about'
+    },
+    {
+      id: 9,
+      type: 'page',
+      title: 'Contact',
+      content: '',
+      url: '/contact'
+    },
   ];
 
   search(query: string): Search[] {

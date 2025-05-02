@@ -6,12 +6,14 @@ import { ProjectsComponent } from './projects/projects.component';
 import { SearchComponent } from './search/search.component';
 import { ResumeComponent } from './resume/resume.component';
 import { NotfoundComponent } from './notfound/notfound.component';
+import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
 
 
 export const routes: Routes = [
   // public routes...
   { path: 'home', component: HomeComponent },
   { path: 'projects', component: ProjectsComponent },
+  { path: 'projects/:slug', component: ProjectDetailComponent },
   { path: 'resume', component: ResumeComponent },
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactComponent },

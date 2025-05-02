@@ -10,11 +10,11 @@ import { RouterLink, RouterModule } from '@angular/router';
     .grid.download {
       padding: .4em;
       border-radius: .5em;
-      width: calc(100% - .8em);
+      width: calc(95% - .8em);
       margin: 2em auto 2em auto;
       max-width: calc(1440px - .8em);
       color: var(--text-color, #fff);
-      background: var(--accent-color-secondary, #333);
+      background: var(--primary-shade-color, #333);
     }
     .grid.download p,
     .grid.download span {
@@ -108,10 +108,24 @@ import { RouterLink, RouterModule } from '@angular/router';
     td { padding: .4em; }
 
     @media (max-width: 800px) {
+      .grid.download {
+        width: calc(90% - .8em);
+        flex-direction: column-reverse;
+      }
+      .grid.download .row {
+        flex-direction: column;
+      }
       .grid.download p,
       .grid.download span {
+        justify-items: left;
+        justify-content: left;
         width: calc(100% - .8em);
       }
+      .grid.download span {
+        justify-items: right;
+        justify-content: right;
+      }
+
       .grid .row {
         margin: auto;
         width: calc( 100% - .8em);
