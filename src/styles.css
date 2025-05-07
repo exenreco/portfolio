@@ -25,6 +25,8 @@ html, body {
 
 }
 
+i { font-style: italic;}
+
 p { font-size: 1.225rem; }
 
 small { font-size: 0.925rem; }

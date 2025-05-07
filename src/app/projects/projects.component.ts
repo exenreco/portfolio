@@ -10,13 +10,34 @@ import { PROJECTS } from './projects.data';
   standalone: true,
   imports: [CommonModule, RouterLink, RouterModule],
   styles: `
+    .page.projects { margin-bottom: 2em; }
+
+    .intro,
+    .projects-title {
+      margin: auto;
+      padding: .4em;
+      margin-bottom: 2em;
+      width: calc(100% - .8em);
+      width: calc(100% - .8em);
+      max-width: calc(1440px - .8em);
+    }
+    .intro .title,
+    .intro .post-text {
+      width: 95%;
+      margin: auto;
+    }
+
     .masonry-grid {
+      gap: 1.5rem;
+      margin: auto;
       display: grid;
+      padding: .4em;
+      align-items: start;
+      grid-auto-flow: dense;
+      width: calc(100% - .8em);
+      max-width: calc(1440px - .8em);
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       grid-auto-rows: masonry; /* Fallback for browsers that don't support masonry */
-      grid-auto-flow: dense;
-      gap: 1.5rem;
-      align-items: start;
     }
 
     .masonry-item {
@@ -49,9 +70,9 @@ import { PROJECTS } from './projects.data';
 
     .grid.footer .row .btn {
       width: 50%;
+      padding: 0;
       max-width: 50%;
       min-width: 50%;
-      padding: 0;
     }
 
     .project-info {
@@ -100,6 +121,18 @@ import { PROJECTS } from './projects.data';
   template: `
     <section class="page projects">
       <h1 class="page-title">Projects</h1>
+      <section class="intro post-section secondary">
+        <h2 class="title">Introductions</h2>
+        <p class="post-text">
+          Welcome to my Projects page! A curated showcase of the applications,
+          themes, and sites I’ve built to hone my skills and solve real-world problems.
+          Each project demonstrates a different facet of my expertise, from front-end
+          frameworks and modern JavaScript patterns to full-stack back-end development
+          and WordPress theming. Feel free to explore the list below and click through
+          to dive into the technical details, see live demos, or review source code.
+        </p>
+      </section>
+      <h2 class="title projects-title" style="border-bottom: .2em solid var(--primary-shade-color, #333);">Projects</h2>
       <div class="masonry-grid">
         <div class="masonry-item" *ngFor="let project of projects">
           <figure class="project-card">
@@ -108,17 +141,14 @@ import { PROJECTS } from './projects.data';
               [alt]="project.title" class="project-image"
               [style.--aspect-ratio]="project.aspectRatio || 16/9"
             >
-            <figcaption class="project-info">
-              <h2>{{ project.title }}</h2>
-              <p>{{ project.excerpt }}</p>
-              <span>{{ project.time | date }}</span>
-              <footer class="grid footer">
-                <div class="row">
-                  <a class="btn tertiary" [routerLink]="['/projects', project.slug]">Learn More</a>
-                  <a class="btn tertiary" href="{{project.gitRepo}}" target="_blank">
-                    <i class="fa-brands fa-github">
-                  </i></a>
-                </div>
+            <figcaption class="project-info grid">
+              <div class="column">
+                <strong >{{ project.title }}</strong>
+                <small><b>Posted on - {{ project.time | date }}</b></small><br>
+                <small>{{ project.excerpt }}</small>
+              </div>
+              <footer class="row" style="justify-content: right;">
+                <a class="btn tertiary" [routerLink]="['/projects', project.slug]">Read More</a>
               </footer>
             </figcaption>
           </figure>

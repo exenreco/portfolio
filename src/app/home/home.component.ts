@@ -27,78 +27,82 @@ register(); // Register Swiper web components
       coverflowEffect="{ rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true }"
     >
       <swiper-slide class="slide slide-1">
-        <div class="background" style="background-image: url(/images/exenreco.png);"></div>
+        <div class="background" style="background-image: url(/images/exenreco-resume.png);"></div>
         <div class="content">
           <div class="attachment">
             <img
-              src="/images/exenreco.png"
+              src="/images/exenreco-resume.png"
               alt="image of exenreco"
               style="margin: auto;"
             >
           </div>
           <section class="text">
-            <h2 class="heading" style="text-align:center; border-bottom: none;">Welcome to...</h2>
+            <h2 class="heading" style="justify-content:center; text-transform: capitalize; text-decoration: none; border-bottom: none;">Welcome to...</h2>
             <h2
               class="heading"
-              style="text-align:center; font-family: 'Marck Script', cursive; font-size: 42pt; text-transform: none;"
+              style="text-align:center; font-family: 'Marck Script', cursive; font-size: 42pt; text-transform: none; text-decoration: none; justify-content: center;"
             >Exenreco's Story</h2>
             <p style="text-align: center; margin-bottom: 1em;">Developer | Designer | Dreamer...</p>
             <div class="CTAs" style="justify-content: center;">
-              <a class="btn primary">About</a>
-              <a class="btn secondary">Projects</a>
-              <a class="btn tertiary">Resume</a>
+              <a class="btn primary" routerLink="/about">About</a>
+              <a class="btn secondary" routerLink="/projects">Projects</a>
+              <a class="btn tertiary" routerLink="/resume">Resume</a>
             </div>
           </section>
         </div>
       </swiper-slide>
 
       <swiper-slide class="slide slide-2">
-        <div class="background" style="background-image: url(/images/exenreco.png);"></div>
+        <div class="background" style="background-image: url(/images/project-alkamist-cover.png);"></div>
         <div class="content">
           <div class="attachment">
             <img
-              src="/images/exenreco.png"
+              src="/images/project-alkamist-cover.png"
               alt="Slide 1"
               style="margin: auto;"
             >
           </div>
           <section class="text">
-            <h2 class="heading" style="text-align:center;">I'm Exenreco Bell</h2>
+            <h2 class="heading" style="justify-content:center; text-transform: capitalize; text-decoration: none;">
+              Creator of the WP Alkamist Theme
+            </h2>
             <p>
-              Hello there! I'm the voice behind this website, and I am thrilled to share
-              a bit of my world with you. My journey began in 2025 with a
-              simple idea: to create a space where the unique tapestry of
-              my life's stories could be woven together...
+              A portfolio theme needs to balance aesthetic flair with flexibility
+              and performance. For my primary portfolio, I developed a hybrid WordPress theme,
+              leveraging both traditional PHP templates and the block editor to showcase my work
+              through custom patterns, templates, and reusable blocks. Here’s how I built it and the
+              lessons learned along the way...
             </p>
             <div class="CTAs" style="justify-content: center;">
-              <a class="btn primary">Read More</a>
-              <a class="btn secondary">Fun fact</a>
+              <a class="btn primary"  routerLink="/projects/alkamist-theme">Read More</a>
+              <a class="btn secondary" routerLink="/projects">More Projects</a>
             </div>
           </section>
         </div>
       </swiper-slide>
 
       <swiper-slide class="slide slide-3">
-        <div class="background" style="background-image: url(/images/exenreco.png);"></div>
+        <div class="background" style="background-image: url(/images/project-carebuilders-cover.png);"></div>
         <div class="content">
           <div class="attachment">
             <img
-              src="/images/exenreco.png"
+              src="/images/project-carebuilders-cover.png"
               alt="Slide 1"
               style="margin: auto;"
             >
           </div>
           <section class="text">
-            <h2 class="heading" style="text-align:center;">I'm Exenreco Bell</h2>
+            <h2 class="heading" style="justify-content:center; text-transform: capitalize; text-decoration: none;">
+              Work With Large & small scale Organizations
+            </h2>
             <p>
-              Hello there! I'm the voice behind Exenreco, and thrilled to share
-              a bit of my world with you. My journey began in 2024 with a
-              simple idea: to create a space where the unique tapestry of
-              my life's stories could be woven together.
+              I’ve had the privilege of partnering with organizations of all sizes from
+              nimble startups and local non-profits to established enterprises, helping each
+              address their unique challenges with tailored, scalable solutions.
             </p>
             <div class="CTAs" style="justify-content: center;">
-              <a class="btn primary">Learn More</a>
-              <a class="btn tertiary">Fun fact</a>
+              <a class="btn primary" routerLink="/projects/care-builders">CareBuilder's Project</a>
+              <a class="btn tertiary" routerLink="/projects">More Projects</a>
             </div>
           </section>
         </div>
@@ -113,17 +117,17 @@ register(); // Register Swiper web components
             I’m Exenreco Bell, based in Omaha, Nebraska, where I combine my
             Caribbean-rooted technical education (CAPE and CXC certifications in IT,
             Engineering, Mathematics, and more) with hands-on roles across
-            industries—from truck loading at Oriental Trading Company to multimedia
+            industries; from truck loading at Oriental Trading Company to multimedia
             freelancing at Rhythmz Lounge. Beyond the screen, I indulge my creativity
             through 3D printing and photography, all documented in my portfolio.
             Collaborative and resourceful, I’m ready to partner with forward-thinking
             teams to craft impactful digital solutions.
           </p>
-          <button type="button" class="btn primary" routerLink="/contact">
-            Contact <i class="fa-solid fa-paper-plane"></i>
+          <button type="button" class="btn secondary" routerLink="/about">
+            <span style="padding: .2em;">View About</span> <i class="fa-solid fa-arrow-right"></i>
           </button>
         </section>
-        <div class="attachment"><img src="/images/exenreco.png"></div>
+        <div class="attachment"><img src="/images/fun-fact.jpg"></div>
       </div>
     </div>
 
@@ -138,7 +142,7 @@ register(); // Register Swiper web components
 
     <div class="home-section why">
       <div class="container">
-        <div class="attachment"><img src="/images/exenreco.png"></div>
+        <div class="attachment"><img src="/images/skills.jpg"></div>
         <section class="content">
           <h2 class="title">Why Exenreco?</h2>
           <p class="text">
@@ -148,12 +152,12 @@ register(); // Register Swiper web components
             whether optimizing UI performance or designing 3D-printed tooling for
             my home lab. I believe that exceptional digital experiences are born
             from meticulous attention to detail and a willingness to explore emerging
-            technologies—whether that’s tweaking a PHP module, architecting a React
+            technologies; whether that’s tweaking a PHP module, architecting a React
             component, or capturing and manipulating imagery to bring a client’s
             vision to life.
           </p>
-          <button type="button" class="btn primary" routerLink="/contact">
-            Contact <i class="fa-solid fa-paper-plane"></i>
+          <button type="button" class="btn primary" routerLink="/projects">
+            <span style="padding: .2em;">View Projects</span> <i class="fa-solid fa-arrow-right"></i>
           </button>
         </section>
       </div>
@@ -174,11 +178,11 @@ register(); // Register Swiper web components
             Director of IT for Care Builders at Home, ensuring seamless integration of frontend
             interfaces with robust back-end systems.
           </p>
-          <button type="button" class="btn primary" routerLink="/contact">
-            Contact <i class="fa-solid fa-paper-plane"></i>
+          <button type="button" class="btn tertiary" routerLink="/resume">
+            <span style="padding: .2em;">See Resume</span> <i class="fa-solid fa-arrow-right"></i>
           </button>
         </section>
-        <div class="attachment"><img src="/images/exenreco.png"></div>
+        <div class="attachment"><img src="/images/exenreco-resume.png"></div>
       </div>
     </div>
 
@@ -186,7 +190,7 @@ register(); // Register Swiper web components
       <h2 class="title">Getting In Touch...</h2>
       <p class="text">Follow the link to reach out to Exenreco</p>
       <button type="button" class="btn primary" routerLink="/contact">
-        Contact <i class="fa-solid fa-paper-plane"></i>
+        <span style="padding: .2em;">Contact</span> <i class="fa-solid fa-paper-plane"></i>
       </button>
     </section>
   `,
