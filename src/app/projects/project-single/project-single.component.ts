@@ -2,12 +2,12 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { RouterModule, RouterLink } from '@angular/router';
-import { Project } from '../project.interface';
+import { Project } from '../project.model';
 import { PROJECTS } from '../projects.data';
 import { ProjectsService } from '../projects.service';
 
 @Component({
-  selector: 'app-project-detail',
+  selector: 'app-project-single',
   standalone: true,
   imports: [CommonModule, RouterLink, RouterModule],
   styles: `
@@ -65,7 +65,7 @@ import { ProjectsService } from '../projects.service';
     }
   `,
   template: `
-    <section class="page project-detail">
+    <section class="page project-single">
       <h1 *ngIf="project" class="page-title">{{ project.title }}</h1>
       <main class="project grid">
         <div *ngIf="project" class="row">
@@ -82,7 +82,7 @@ import { ProjectsService } from '../projects.service';
     </section>
   `
 })
-export class ProjectDetailComponent {
+export class ProjectSingleComponent {
   private route = inject(ActivatedRoute);
   project?: Project;
 

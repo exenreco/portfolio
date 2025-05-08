@@ -21,7 +21,7 @@ register(); // Register Swiper web components
       navigation="true"
       space-between="20"
       effect="coverflow"
-      slides-per-view="auto"
+      slides-per-view="1"
       pagination='{"clickable": true}'
       autoplay='{"delay": 3000, "disableOnInteraction": true}'
       coverflowEffect="{ rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true }"

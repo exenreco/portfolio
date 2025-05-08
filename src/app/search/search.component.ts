@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SearchService } from './search.service';
 import { NgSwitch, NgFor, NgIf, NgSwitchCase } from '@angular/common';
 import { TruncatePipe } from './truncate.pipe';
@@ -8,8 +9,18 @@ import { TruncatePipe } from './truncate.pipe';
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [ CommonModule, RouterLink, RouterModule, NgFor, NgIf, NgSwitch, NgSwitchCase, TruncatePipe],
+  imports: [
+    CommonModule,
+    RouterLink,
+    RouterModule,
+    NgFor,
+    NgIf,
+    NgSwitch,
+    NgSwitchCase,
+    TruncatePipe
+  ],
   styles: `
+    .no-result.grid,
     .results-text.grid,
     .results-list.grid,
     .filter-options {
@@ -175,28 +186,41 @@ import { TruncatePipe } from './truncate.pipe';
 
       <div class="grid results-text">
         <div class="column">
-        <p style="font-style:italic;border-bottom: .2em solid #333;">Search results for "<strong>{{ searchTerm }}</strong>"</p>
+          <p style="font-style:italic;border-bottom: .2em solid #333;">
+            Search results for "<strong>{{ searchTerm }}</strong>"
+          </p>
         </div>
       </div>
 
-      <div class="filter-options">
+       <div class="filter-options">
         <div class="grid header">
-          <div (click)="toggleFilter()" [ngClass]="{'open': isOpen, 'closed': !isOpen}" class="row trigger">
+          <div
+            class="row trigger"
+            (click)="toggleFilter()"
+            [ngClass]="{ open: isOpen, closed: !isOpen }"
+          >
             <div class="left">
               <span class="icon"><i class="fa-solid fa-list"></i></span>
               <span class="text">Filters</span>
             </div>
-            <div class="right" [ngStyle]="{'rotate': isOpen ? '180deg' : '0deg'}">
+            <div class="right" [ngStyle]="{ rotate: isOpen ? '180deg' : '0deg' }">
               <span class="icon indicator"><i class="fa-solid fa-chevron-down"></i></span>
             </div>
           </div>
         </div>
-        <div class="grid options" [ngStyle]="{'display': isOpen ? 'block' : 'none'}">
+        <div
+          class="grid options"
+          [ngStyle]="{ display: isOpen ? 'block' : 'none' }"
+        >
           <div class="column">
             <span *ngFor="let type of searchTypes" class="toggle">
               <p>{{ type | titlecase }}</p>
               <label class="switch">
-                <input type="checkbox" [checked]="selectedTypes.has(type)"(change)="toggleType(type)">
+                <input
+                  type="checkbox"
+                  [checked]="selectedTypes.has(type)"
+                  (change)="toggleType(type)"
+                />
                 <span class="slider round"></span>
               </label>
             </span>
@@ -206,50 +230,64 @@ import { TruncatePipe } from './truncate.pipe';
 
       <div class="results-list grid">
         <div class="column">
-          <div *ngFor="let item of filteredResults"
-              class="result-card"
-              [ngSwitch]="item.type">
 
-            <!-- Project Results -->
-            <div *ngSwitchCase="'project'" class="project-result">
-              <h3>
-                <a [routerLink]="item.url">{{ item.title }}</a>
-                <span class="type-badge">Project</span>
-              </h3>
-              <div class="skills" *ngIf="item.skills">
-                <span class="skill-tag" *ngFor="let skill of item.skills">
-                  {{ skill }}
-                </span>
+          <!-- Show results if any; otherwise show "no results" -->
+          <ng-container *ngIf="filteredResults.length > 0; else noResults">
+            <div *ngFor="let item of filteredResults"
+                 class="result-card"
+                 [ngSwitch]="item.type">
+
+              <!-- Project -->
+              <div *ngSwitchCase="'project'" class="project-result">
+                <h3>
+                  <a [routerLink]="item.url">{{ item.title }}</a>
+                  <span class="type-badge">Project</span>
+                </h3>
+                <div class="skills" *ngIf="item.skills">
+                  <span class="skill-tag" *ngFor="let skill of item.skills">
+                    {{ skill }}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <!-- Blog Results -->
-            <div *ngSwitchCase="'blog'" class="blog-result">
-              <h3>
-                <a [routerLink]="item.url">{{ item.title }}</a>
-                <span class="type-badge">Blog Post</span>
-              </h3>
-              <p class="excerpt">{{ item.content | truncate:150 }}</p>
-              <div class="tags">
-                <span class="tag" *ngFor="let tag of item.tags">
-                  {{ tag }}
-                </span>
+              <!-- Blog -->
+              <div *ngSwitchCase="'blog'" class="blog-result">
+                <h3>
+                  <a [routerLink]="item.url">{{ item.title }}</a>
+                  <span class="type-badge">Blog Post</span>
+                </h3>
+                <p class="excerpt">{{ item.content | truncate:150 }}</p>
+                <div class="tags">
+                  <span class="tag" *ngFor="let tag of item.tags">
+                    {{ tag }}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <!-- Default Result -->
-            <div *ngSwitchDefault class="default-result">
-              <h3>
-                <a [routerLink]="item.url">{{ item.title }}</a>
-              </h3>
-              <p *ngIf="item.content" class="excerpt">
-                {{ item.content | truncate:100 }}
+              <!-- Default -->
+              <div *ngSwitchDefault class="default-result">
+                <h3>
+                  <a [routerLink]="item.url">{{ item.title }}</a>
+                </h3>
+                <p *ngIf="item.content" class="excerpt">
+                  {{ item.content | truncate:100 }}
+                </p>
+              </div>
+
+            </div>
+          </ng-container>
+
+          <!-- No-results template -->
+          <ng-template #noResults>
+            <div class="grid no-results" style="justify-content:center;">
+              <p class="row"  style="justify-content:center;">
+                No results found for “<strong>{{ searchTerm }}</strong>”
               </p>
             </div>
-          </div>
+          </ng-template>
+
         </div>
       </div>
-
     </section>
   `
 })
@@ -277,9 +315,11 @@ export class SearchComponent implements OnInit {
       this.results = this.searchService.search(this.searchTerm);
     });
   }
+
   toggleFilter(): void {
     this.isOpen = !this.isOpen;
   }
+
   toggleType(type: string) {
     if (this.selectedTypes.has(type)) {
       this.selectedTypes.delete(type);

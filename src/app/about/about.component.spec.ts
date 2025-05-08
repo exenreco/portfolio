@@ -17,7 +17,7 @@ describe('AboutComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('└── Should create the "About Component"!', () => {
     expect(component).toBeTruthy();
   });
 });

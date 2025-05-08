@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink } from '@angular/router';
-import { Project } from './project.interface';
+import { Project } from './project.model';
 import { ProjectsService } from './projects.service';
 import { PROJECTS } from './projects.data';
 

@@ -11,15 +11,15 @@ import rateLimit from 'express-rate-limit';
 const
 __filename = fileURLToPath(import.meta.url),
 
-__dirname = path.dirname(__filename),
-
-app = express(),
-
-port = process.env.PORT || 3000;
-
+__dirname = path.dirname(__filename);
 
 // Load environment variables from server/.env
 dotenv.config({ path: path.join(__dirname, '.env') });
+
+const
+  app = express(),
+
+  port = process.env.PORT || 3000;
 
 // Basic middleware
 app.use(cors({
@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 
 // server server url
 app.get('/config.json', (req, res) => {
-  res.json({ apiBase: process.env.API_BASE_URL || '' });
+  res.json({ apiBase: process.env.API_BASE_URL || 'http://localhost:3000' });
 });
 
 const
@@ -39,18 +39,16 @@ const
   transporter = nodemailer.createTransport({
     host: 'smtp.mail.yahoo.com',
     port: 465,
-    secure: true,
+    service:'yahoo',
+    secure: false,
     auth: {
       user: process.env.YAHOO_USER,
       pass: process.env.YAHOO_PASSWORD
     },
-    tls: {
-      // to be replaced!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      rejectUnauthorized: false // Only for testing, remove in production
-    },
-    // to be removerd !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    debug: true,
-    logger: true,
+    connectionTimeout: 10000,
+    tls: { rejectUnauthorized: true },
+    debug: false,
+    logger: false
   }),
 
   // Rate limiting (15 minutes, 5 requests)
@@ -70,7 +68,7 @@ app.use('/api/send-email', (req, res, next) => {
     return res.status(400).json({ message: 'Invalid email format' });
   }
 
-  if (phone && !/\(\d{3}\) \d{3}-\d{4}/.test(phone)) {
+  if (phone && !/^(?:\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$/.test(phone)) {
     return res.status(400).json({ message: 'Invalid phone format' });
   }
 
@@ -101,16 +99,13 @@ app.post('/api/send-email', async (req, res) => {
       });
     }
 
-    // Create mail options
-    const mailOptions = {
-      from: `"Contact Form" <${process.env.YAHOO_USER}>`,
-      to: process.env.TO_EMAIL,
-      replyTo: req.body.email,
-      subject: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px;">
-          <h2 style="color: #1a73e8;">New Contact Form Submission</h2>
+    const
 
-          <div style="margin: 15px 0; padding: 10px; background: #f8f9fa;">
+    // mail body
+    htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px;">
+        <h2 style="color: #1a73e8;">New Contact Form Submission</h2>
+        <div style="margin: 15px 0; padding: 10px; background: #f8f9fa;">
             <p style="margin: 5px 0;">
               <strong>Name:</strong>
               ${req.body.fName || 'Not provided'} ${req.body.lName || ''}
@@ -137,8 +132,16 @@ app.post('/api/send-email', async (req, res) => {
               ${req.body.message.replace(/\n/g, '<br>')}
             </p>
           </div>
-        </div>
-      `
+      </div>
+    `,
+    // Create mail options
+    mailOptions = {
+      from: process.env.YAHOO_USER,
+      to: process.env.TO_EMAIL,
+      replyTo: req.body.email,
+      subject: `[Contact] ${req.body.subject.substring(0, 50) || 'No subject provided'}`,
+      html: htmlBody,                                 // HTML body
+      text: htmlBody.replace(/<[^>]+>/g, '\n').trim() // optional plaintext fallback
     };
 
     if (!req.body.email || !req.body.message) {
@@ -147,12 +150,6 @@ app.post('/api/send-email', async (req, res) => {
 
     // Send email
     const info = await transporter.sendMail(mailOptions);
-    /*const info = await transporter.sendMail({
-      from: `"Contact Form" <${process.env.YAHOO_USER}>`,
-      to: process.env.YAHOO_USER,
-      subject: 'New Contact Form Submission',
-      text: JSON.stringify(req.body, null, 2)
-    });*/
 
     res.status(200).json({
       message: 'Email sent successfully',

@@ -213,7 +213,7 @@ import { map, switchMap } from 'rxjs/operators';
                 name="phone"
                 placeholder="(000) 000-0000"
                 [(ngModel)]="contactModel.phone"
-                pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                pattern="^(\\(\\d{3}\\)|\\d{3})[-.\\s]?\\d{3}[-.\\s]?\\d{4}$"
               >
             </span>
           </div>
@@ -295,11 +295,11 @@ export class ContactComponent {
   constructor(private http: HttpClient) {}
 
   // get mailing server url
-  getApiBaseUrl(): Observable<string> {
+  /*getApiBaseUrl(): Observable<string> {
     return this.http.get<{ apiBase: string }>('/config.json').pipe(
       map(config => config.apiBase)
     );
-  }
+  }*/
 
   resetForm(form: NgForm) : void {
     form.resetForm();
@@ -307,27 +307,31 @@ export class ContactComponent {
 
   sendMail(form: NgForm): void {
     this.loading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
 
-    this.getApiBaseUrl().pipe(
-      switchMap(apiBase => {
-        const url = `${apiBase}/api/send-email`;
-        return this.http.post<Contact>(url, this.contactModel);
-      })
-    ).subscribe({
-      next: (response) => {
-        console.log('Success:', response);
-        this.successMessage = 'Message sent successfully!';
-        this.errorMessage = '';
-        this.resetForm(form);
-        this.loading = false;
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('Full error:', error);
-        this.errorMessage = error.error?.message || error.message || 'Unknown error';
-        this.successMessage = '';
-        this.loading = false;
-      }
-    });
+    this.http.post<Contact>('/api/send-email', this.contactModel)
+      .subscribe({
+        next: (res) => {
+          this.successMessage = 'Message sent successfully!';
+          this.resetForm(form);
+          this.loading = false;
+        },
+        error: (err: HttpErrorResponse) => {
+          this.errorMessage = this.parseError(err);
+          this.loading = false;
+        }
+      });
+  }
+
+  private parseError(error: HttpErrorResponse): string {
+    if (error.error instanceof ErrorEvent) {
+      return `Client error: ${error.error.message}`;
+    }
+    if (error.status === 0) {
+      return 'Connection error - check network';
+    }
+    return error.error?.message || error.message || 'Unknown server error';
   }
 
   onSubmit(form: NgForm) {

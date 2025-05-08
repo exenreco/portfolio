@@ -3,11 +3,20 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, RouterOutlet, RouterLink, Router} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GoogleMapComponent } from './google-map/google-map.component';
+import { ProjectSingleComponent } from './projects/project-single/project-single.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, RouterOutlet, RouterLink, CommonModule, FormsModule, GoogleMapComponent],
+  imports: [
+    RouterModule,
+    RouterOutlet,
+    RouterLink,
+    CommonModule,
+    FormsModule,
+    GoogleMapComponent,
+    ProjectSingleComponent
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

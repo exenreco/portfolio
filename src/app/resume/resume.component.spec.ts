@@ -17,7 +17,7 @@ describe('ResumeComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('└── Should create the "Resume Component"!', () => {
     expect(component).toBeTruthy();
   });
 });
