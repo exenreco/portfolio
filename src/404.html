@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script>
+      sessionStorage.redirect = location.href;
+      window.location.replace('/portfolio/'); // Redirect to your app's base URL
+    </script>
+  </head>
+  <body>
+    Redirecting to <a href="/portfolio/">the main page</a>...
+  </body>
+</html>

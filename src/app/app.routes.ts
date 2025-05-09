@@ -11,6 +11,7 @@ import { ProjectSingleComponent } from './projects/project-single/project-single
 
 export const routes: Routes = [
   // public routes...
+  { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
   { path: 'projects', component: ProjectsComponent },
   { path: 'projects/:slug', component: ProjectSingleComponent },
@@ -18,6 +19,5 @@ export const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'search', component: SearchComponent, title: 'Search Results' }, // search routs
-  { path: '', redirectTo: '/home', pathMatch: 'full' }, // no query redirect to home
   { path: '**', component: NotfoundComponent } // wildcard / 404:
 ];
