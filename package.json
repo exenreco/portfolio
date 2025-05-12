@@ -2,6 +2,7 @@
   "name": "portfolio",
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://exenreco.github.io/portfolio/",
   "scripts": {
     "ng": "ng",
     "start": "concurrently \"npm run start:angular\" \"npm run start:server\"",
@@ -22,7 +23,6 @@
     "@angular/platform-browser": "^18.0.0",
     "@angular/platform-browser-dynamic": "^18.0.0",
     "@angular/router": "^18.0.0",
-    "angular-cli-ghpages": "^2.0.3",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
@@ -42,6 +42,7 @@
     "@angular/cli": "^18.0.3",
     "@angular/compiler-cli": "^18.0.0",
     "@types/jasmine": "~5.1.0",
+    "angular-cli-ghpages": "^2.0.3",
     "concurrently": "^9.1.2",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
