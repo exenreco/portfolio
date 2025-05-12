@@ -29,7 +29,8 @@
               {
                 "glob": "**/*",
                 "input": "public",
-                "output": "/"
+                "output": "/",
+                "ignore": ["**/assets/**"]
               },
               "src/404.html"
             ],
