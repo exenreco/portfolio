@@ -18,5 +18,10 @@
     "target":       "https://localhost:3000",
     "secure":       false,
     "changeOrigin": true
+  },
+  "https://maps.googleapis.com/*": {
+    "target":       "https://maps.googleapis.com",
+    "secure":       false,
+    "changeOrigin": true
   }
 }

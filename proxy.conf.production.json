@@ -18,5 +18,10 @@
     "target":       "https://portfolio-server-u87c.onrender.com/",
     "secure":       false,
     "changeOrigin": true
+  },
+  "https://maps.googleapis.com/*": {
+    "target":       "https://maps.googleapis.com",
+    "secure":       false,
+    "changeOrigin": true
   }
 }
