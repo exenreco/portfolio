@@ -144,16 +144,14 @@ import { TruncatePipe } from '../truncate.pipe';
           "
           class="title projects-title"
           >Projects List</h2>
+          <div *ngIf="loading" class="loading-message post-section">
+            <p class="post-text">Loading projects...</p>
+          </div>
+          <div *ngIf="error" class="error-message post-section">
+            <p class="post-text">{{ error }}</p>
+          </div>
       </section>
 
-
-      <div *ngIf="loading" class="loading-message post-section">
-        <p class="post-text">Loading projects...</p>
-      </div>
-
-      <div *ngIf="error" class="error-message post-section">
-        <p class="post-text">{{ error }}</p>
-      </div>
 
       <div class="masonry-grid">
         <div class="masonry-item" *ngFor="let project of projects">
