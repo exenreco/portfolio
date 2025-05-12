@@ -243,6 +243,17 @@ app.use(cors({ origin: [ `http://${DevURL}:${DevPort}`, `https://${ProdURL}` ] }
 app.use(express.json()),
 app.use(express.urlencoded({ extended: true })),
 
+app.get('/', (req, res) => res.send(`
+  <h1>The Portfolio Server is currently running!</h1>
+  <p>Mailing endpoint can be found at - <a href="/api/mail">@See Mailing</a></p>
+  <p>Projects endpoint can be found at - <a href="/api/projects">@See Projects</a></p>
+  <p>The ${
+    ServerPort === 3000
+    ? 'Development site can be found at - <a href="http://localhost:4200">@see Development</a>'
+    : 'Development site can be found at - <a href="https://exenreco.github.io/portfolio">@see Production</a>'
+  }</p>
+`) );
+
 /**
  ** Sets the server endpoint -> mailing
  ** =========================================================================*/
