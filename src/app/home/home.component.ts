@@ -29,11 +29,11 @@ register(); // Register Swiper web components
       coverflowEffect="{ rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true }"
     >
       <swiper-slide class="slide slide-1">
-        <div class="background" style="background-image: url(/assets/images/exenreco-resume.png);"></div>
+        <div class="background" style="background-image: url(assets/images/exenreco-resume.png);"></div>
         <div class="content">
           <div class="attachment">
             <img
-              src="/assets/images/exenreco-resume.png"
+              src="assets/images/exenreco-resume.png"
               alt="image of exenreco"
               style="margin: auto;"
             >
@@ -105,7 +105,7 @@ register(); // Register Swiper web components
             <span style="padding: .2em;">View About</span> <i class="fa-solid fa-arrow-right"></i>
           </button>
         </section>
-        <div class="attachment"><img src="/assets/images/fun-fact.jpg"></div>
+        <div class="attachment"><img src="assets/images/fun-fact.jpg"></div>
       </div>
     </div>
 
@@ -120,7 +120,7 @@ register(); // Register Swiper web components
 
     <div class="home-section why">
       <div class="container">
-        <div class="attachment"><img src="/assets/images/skills.jpg"></div>
+        <div class="attachment"><img src="assets/images/skills.jpg"></div>
         <section class="content">
           <h2 class="title">Why Exenreco?</h2>
           <p class="text">
@@ -160,7 +160,7 @@ register(); // Register Swiper web components
             <span style="padding: .2em;">See Resume</span> <i class="fa-solid fa-arrow-right"></i>
           </button>
         </section>
-        <div class="attachment"><img src="/assets/images/exenreco-resume.png"></div>
+        <div class="attachment"><img src="assets/images/exenreco-resume.png"></div>
       </div>
     </div>
 

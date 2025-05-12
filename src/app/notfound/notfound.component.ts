@@ -60,7 +60,7 @@ import { CommonModule } from '@angular/common';
       <h1 class="page-title">404</h1>
       <div class="grid notfound">
         <div class="row content">
-            <span class="image-container"><img src="/assets/images/error.gif"></span>
+            <span class="image-container"><img src="assets/images/error.gif"></span>
             <p>
               <strong>404.</strong> That's an error.<br> The requested URL
               "<strong>{{ currentUrl }}</strong>" was not found on this server.<br>

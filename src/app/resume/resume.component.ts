@@ -155,8 +155,8 @@ import { RouterLink, RouterModule } from '@angular/router';
             <a
               type="button"
               class="btn secondary"
-              download="/assets/doc/resume-exenreco.pdf"
-              href="/doc/resume-v-04.18.2024.pdf"
+              download="resume-exenreco.pdf"
+              href="assets/doc/resume-v-04.18.2024.pdf"
             ><i class="fa-solid fa-file-pdf"></i> Resume Download</a>
           </span>
         </div>
@@ -168,7 +168,7 @@ import { RouterLink, RouterModule } from '@angular/router';
 
             <section class="section image">
               <h2 class="heading" style="display: none; visibility: hidden;">portfolio image</h2>
-              <img class="resume-image" src="assets/images/exenreco-resume.png">
+              <img class="resume-image" src="assets/images/exenreco-resume.png" alt="An image of Exenreco Bell">
             </section>
 
             <section class="section summary">
