@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/portfolio",
+            "outputPath": "dist/portfolio/browser",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -21,6 +21,11 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              {
+                "glob": "**/*",
+                "input": "public/assets",
+                "output": "assets"
+              },
               {
                 "glob": "**/*",
                 "input": "public",
@@ -35,6 +40,8 @@
           },
           "configurations": {
             "production": {
+              "baseHref":   "/portfolio/",
+              "deployUrl":  "/portfolio/",
               "budgets": [
                 {
                   "type": "initial",
@@ -97,7 +104,12 @@
           }
         },
         "deploy": {
-          "builder": "angular-cli-ghpages:deploy"
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "dir": "dist/portfolio/browser",
+            "branch": "gh-pages",
+            "message": "chore: deploy to gh-pages"
+          }
         }
       }
     }

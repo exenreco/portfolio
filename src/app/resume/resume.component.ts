@@ -152,9 +152,12 @@ import { RouterLink, RouterModule } from '@angular/router';
         <div class="row">
           <p>Download a digital copy of this resume by clicking the link.</p>
           <span>
-            <a type="button" class="btn secondary" download="/assets/doc/resume-exenreco.pdf" href="/doc/resume-v-04.18.2024.pdf">
-              <i class="fa-solid fa-file-pdf"></i> Resume Download
-            </a>
+            <a
+              type="button"
+              class="btn secondary"
+              download="/assets/doc/resume-exenreco.pdf"
+              href="/doc/resume-v-04.18.2024.pdf"
+            ><i class="fa-solid fa-file-pdf"></i> Resume Download</a>
           </span>
         </div>
       </div>
