@@ -261,16 +261,16 @@ app.use((req, res) => res.status(404).json({ error: 'Not found' })),
 /**
  ** Create Server -> creates the HTTPS server instance.
  ** =========================================================================*/
-/*httpsServer
+httpsServer
   .listen(ServerPort, () => console.log(`The HTTP Server has started!`) )
   .on('error', onError)
-  .on('listening', () => onListening('Express Server', httpsServer));*/
+  .on('listening', () => onListening('Express Server', httpsServer));
 
 /**
  ** Create Server -> creates HTTP the server instance.
  ** =========================================================================*/
 httpServer
-  //.listen(80, () => console.log('   - HTTP -> HTTPS redirector listening on port 80'));
-  .listen(ServerPort, () => console.log(`The HTTP Server has started!`) )
+  .listen(80, () => console.log('   - HTTP -> HTTPS redirector listening on port 80'));
+  /*.listen(ServerPort, () => console.log(`The HTTP Server has started!`) )
   .on('error', onError)
-  .on('listening', () => onListening('Express Server', httpServer));
+  .on('listening', () => onListening('Express Server', httpServer));*/
