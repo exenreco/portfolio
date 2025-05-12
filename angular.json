@@ -45,10 +45,6 @@
               "deployUrl":  "/portfolio/",
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                },
-                {
                   "replace": "proxy.conf.json",
                   "with": "proxy.conf.production.json"
                 }
