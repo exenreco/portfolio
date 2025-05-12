@@ -23,12 +23,12 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "src/public/assets",
+                "input": "/public/assets",
                 "output": "assets"
               },
               {
                 "glob": "**/*",
-                "input": "src/public",
+                "input": "/public",
                 "output": "/",
                 "ignore": ["**/assets/**"]
               },
