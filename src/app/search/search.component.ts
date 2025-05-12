@@ -4,7 +4,7 @@ import { RouterLink, RouterModule } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { SearchService } from './search.service';
 import { NgSwitch, NgFor, NgIf, NgSwitchCase } from '@angular/common';
-import { TruncatePipe } from './truncate.pipe';
+import { TruncatePipe } from '../truncate.pipe';
 
 @Component({
   selector: 'app-search',

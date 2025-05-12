@@ -3,17 +3,18 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink } from '@angular/router';
 import { Project } from './project.model';
 import { ProjectsService } from './projects.service';
-import { PROJECTS } from './projects.data';
-
+import { TruncatePipe } from '../truncate.pipe';
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterModule],
+  imports: [CommonModule, RouterLink, RouterModule, TruncatePipe],
   styles: `
     .page.projects { margin-bottom: 2em; }
 
     .intro,
-    .projects-title {
+    .error-message
+    .projects-title,
+    .loading-message {
       margin: auto;
       padding: .4em;
       margin-bottom: 2em;
@@ -22,7 +23,9 @@ import { PROJECTS } from './projects.data';
       max-width: calc(1440px - .8em);
     }
     .intro .title,
-    .intro .post-text {
+    .intro .post-text,
+    .error-message .post-text,
+    .loading-message .post-text {
       width: 95%;
       margin: auto;
     }
@@ -132,7 +135,26 @@ import { PROJECTS } from './projects.data';
           to dive into the technical details, see live demos, or review source code.
         </p>
       </section>
-      <h2 class="title projects-title" style="border-bottom: .2em solid var(--primary-shade-color, #333);">Projects</h2>
+      <section class="intro post-section">
+         <h2
+          style="
+            width: 100%;
+            text-decoration: none;
+            border-bottom: .2em solid var(--primary-shade-color, #333);
+          "
+          class="title projects-title"
+          >Projects List</h2>
+      </section>
+
+
+      <div *ngIf="loading" class="loading-message post-section">
+        <p class="post-text">Loading projects...</p>
+      </div>
+
+      <div *ngIf="error" class="error-message post-section">
+        <p class="post-text">{{ error }}</p>
+      </div>
+
       <div class="masonry-grid">
         <div class="masonry-item" *ngFor="let project of projects">
           <figure class="project-card">
@@ -144,8 +166,8 @@ import { PROJECTS } from './projects.data';
             <figcaption class="project-info grid">
               <div class="column">
                 <strong >{{ project.title }}</strong>
-                <small><b>Posted on - {{ project.time | date }}</b></small><br>
-                <small>{{ project.excerpt }}</small>
+                <small style="margin-bottom: .4em;"><b>Posted on - {{ project.time | date }}</b></small>
+                <small>{{ project.excerpt | truncate:100 }}</small>
               </div>
               <footer class="row" style="justify-content: right;">
                 <a class="btn tertiary" [routerLink]="['/projects', project.slug]">Read More</a>
@@ -158,14 +180,26 @@ import { PROJECTS } from './projects.data';
   `
 })
 export class ProjectsComponent implements OnInit {
-  projects: Project[] = PROJECTS;
+  projects: Project[] = [];
+  loading = true;
+  error: string | null = null;
 
   constructor(private projectsService: ProjectsService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectsService.getProjects().subscribe({
-      next: (projects) => this.projects = projects,
-      error: (error) => console.error('Error fetching projects:', error)
+      next: (projects) => {
+        this.projects = projects.map(project => ({
+          ...project,
+          time: new Date(project.time) // FIX SYNTAX ERROR HERE
+        }));
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching projects:', error);
+        this.error = 'Failed to load projects. Please try again later.';
+        this.loading = false;
+      }
     });
   }
 }

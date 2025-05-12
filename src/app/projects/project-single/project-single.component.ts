@@ -1,9 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { RouterModule, RouterLink } from '@angular/router';
 import { Project } from '../project.model';
-import { PROJECTS } from '../projects.data';
 import { ProjectsService } from '../projects.service';
 
 @Component({
@@ -68,7 +67,18 @@ import { ProjectsService } from '../projects.service';
     <section class="page project-single">
       <h1 *ngIf="project" class="page-title">{{ project.title }}</h1>
       <main class="project grid">
-        <div *ngIf="project" class="row">
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-message">
+          <p>Loading Project...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error" class="error-message" style="font-weight: bold; text-align: center;">
+          {{ error }}
+        </div>
+
+        <!-- Content State -->
+        <div *ngIf="project && !loading" class="row">
           <aside class="post-image">
             <img [src]="project.cover" [alt]="project.title">
           </aside>
@@ -77,17 +87,52 @@ import { ProjectsService } from '../projects.service';
             <div [innerHTML]="project.content"></div>
           </article>
         </div>
-        <p *ngIf="!project" class="row">Loading Project...</p>
       </main>
     </section>
   `
 })
-export class ProjectSingleComponent {
+export class ProjectSingleComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  project?: Project;
+  private projectsService = inject(ProjectsService);
 
-  constructor() {
-    const slug = this.route.snapshot.paramMap.get('slug');
-    this.project = PROJECTS.find(p => p.slug === slug);
+  project?: Project;
+  loading = true;
+  error: string | null = null;
+
+  ngOnInit() {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      const slug = params.get('slug');
+      if (!slug) {
+        this.error = 'Invalid project URL';
+        this.loading = false;
+        return;
+      }
+
+      this.resetState();
+      this.loadProject(slug);
+    });
+  }
+
+  private resetState() {
+    this.loading = true;
+    this.error = null;
+    this.project = undefined;
+  }
+
+  private loadProject(slug: string) {
+    this.projectsService.getProjectBySlug(slug).subscribe({
+      next: (project) => {
+        this.project = {
+          ...project,
+          time: new Date(project.time)
+        };
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching project:', err);
+        this.error = 'Project not found or failed to load';
+        this.loading = false;
+      }
+    });
   }
 }

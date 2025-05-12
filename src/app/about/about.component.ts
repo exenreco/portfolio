@@ -88,7 +88,7 @@ import { RouterModule, RouterLink } from '@angular/router';
       <h1 class="page-title">About</h1>
       <div class="wrapper">
         <div class="header-section">
-          <div class="image-container"><img src="/images/exenreco.png"></div>
+          <div class="image-container"><img src="/assets/images/exenreco.png"></div>
           <section class="content">
 
             <p> Hello! I’m Exenreco Bell, a passionate Web Developer and

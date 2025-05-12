@@ -1,16 +1,18 @@
-import { Component, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink } from '@angular/router';
-
+import { Project } from '../projects/project.model';
+import { ProjectsService } from '../projects/projects.service';
 import { register } from 'swiper/element/bundle';
-import { SwiperContainer, SwiperSlide } from 'swiper/element';
+import { SwiperContainer } from 'swiper/element';
+import { TruncatePipe } from '../truncate.pipe';
 
 register(); // Register Swiper web components
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterModule],
+  imports: [CommonModule, RouterLink, RouterModule, TruncatePipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <swiper-container
@@ -27,11 +29,11 @@ register(); // Register Swiper web components
       coverflowEffect="{ rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true }"
     >
       <swiper-slide class="slide slide-1">
-        <div class="background" style="background-image: url(/images/exenreco-resume.png);"></div>
+        <div class="background" style="background-image: url(/assets/images/exenreco-resume.png);"></div>
         <div class="content">
           <div class="attachment">
             <img
-              src="/images/exenreco-resume.png"
+              src="/assets/images/exenreco-resume.png"
               alt="image of exenreco"
               style="margin: auto;"
             >
@@ -52,61 +54,37 @@ register(); // Register Swiper web components
         </div>
       </swiper-slide>
 
-      <swiper-slide class="slide slide-2">
-        <div class="background" style="background-image: url(/images/project-alkamist-cover.png);"></div>
+      <!-- Loading State -->
+      <swiper-slide *ngIf="loading" class="loading-slide">
+        <div class="loading-message">Loading featured projects...</div>
+      </swiper-slide>
+
+      <!-- Error State -->
+      <swiper-slide *ngIf="error" class="error-slide">
+        <div class="error-message">{{ error }}</div>
+      </swiper-slide>
+
+      <!-- Dynamic Project Slides -->
+      <swiper-slide *ngFor="let project of featuredProjects" class="slide">
+        <div class="background" [style.background-image]="'url(' + project.cover + ')'"></div>
         <div class="content">
           <div class="attachment">
-            <img
-              src="/images/project-alkamist-cover.png"
-              alt="Slide 1"
-              style="margin: auto;"
-            >
+            <img [src]="project.cover" [alt]="project.title" style="margin: auto;">
           </div>
           <section class="text">
+            <small class="title" style="justify-content:center; text-transform: capitalize; text-decoration: none; border-bottom: none;">FEATURED PROJECT</small>
             <h2 class="heading" style="justify-content:center; text-transform: capitalize; text-decoration: none;">
-              Creator of the WP Alkamist Theme
+               {{ project.title }}
             </h2>
-            <p>
-              A portfolio theme needs to balance aesthetic flair with flexibility
-              and performance. For my primary portfolio, I developed a hybrid WordPress theme,
-              leveraging both traditional PHP templates and the block editor to showcase my work
-              through custom patterns, templates, and reusable blocks. Here’s how I built it and the
-              lessons learned along the way...
-            </p>
+            <p style="text-align: center;">{{ project.excerpt | truncate:250 }}</p>
             <div class="CTAs" style="justify-content: center;">
-              <a class="btn primary"  routerLink="/projects/alkamist-theme">Read More</a>
               <a class="btn secondary" routerLink="/projects">More Projects</a>
+              <a class="btn primary" [routerLink]="['/projects/', project.slug]">Read More</a>
             </div>
           </section>
         </div>
       </swiper-slide>
 
-      <swiper-slide class="slide slide-3">
-        <div class="background" style="background-image: url(/images/project-carebuilders-cover.png);"></div>
-        <div class="content">
-          <div class="attachment">
-            <img
-              src="/images/project-carebuilders-cover.png"
-              alt="Slide 1"
-              style="margin: auto;"
-            >
-          </div>
-          <section class="text">
-            <h2 class="heading" style="justify-content:center; text-transform: capitalize; text-decoration: none;">
-              Work With Large & small scale Organizations
-            </h2>
-            <p>
-              I’ve had the privilege of partnering with organizations of all sizes from
-              nimble startups and local non-profits to established enterprises, helping each
-              address their unique challenges with tailored, scalable solutions.
-            </p>
-            <div class="CTAs" style="justify-content: center;">
-              <a class="btn primary" routerLink="/projects/care-builders">CareBuilder's Project</a>
-              <a class="btn tertiary" routerLink="/projects">More Projects</a>
-            </div>
-          </section>
-        </div>
-      </swiper-slide>
     </swiper-container>
 
     <div class="home-section who">
@@ -127,7 +105,7 @@ register(); // Register Swiper web components
             <span style="padding: .2em;">View About</span> <i class="fa-solid fa-arrow-right"></i>
           </button>
         </section>
-        <div class="attachment"><img src="/images/fun-fact.jpg"></div>
+        <div class="attachment"><img src="/assets/images/fun-fact.jpg"></div>
       </div>
     </div>
 
@@ -142,7 +120,7 @@ register(); // Register Swiper web components
 
     <div class="home-section why">
       <div class="container">
-        <div class="attachment"><img src="/images/skills.jpg"></div>
+        <div class="attachment"><img src="/assets/images/skills.jpg"></div>
         <section class="content">
           <h2 class="title">Why Exenreco?</h2>
           <p class="text">
@@ -182,7 +160,7 @@ register(); // Register Swiper web components
             <span style="padding: .2em;">See Resume</span> <i class="fa-solid fa-arrow-right"></i>
           </button>
         </section>
-        <div class="attachment"><img src="/images/exenreco-resume.png"></div>
+        <div class="attachment"><img src="/assets/images/exenreco-resume.png"></div>
       </div>
     </div>
 
@@ -231,6 +209,21 @@ register(); // Register Swiper web components
       align-items: center;
       justify-items: center;
       justify-content: center;
+    }
+
+    .loading-slide, .error-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .error-slide {
+      background: rgba(200,0,0,0.8);
     }
     .swiper-pagination-bullet-active {
       background-color: #fff !important;
@@ -552,28 +545,56 @@ register(); // Register Swiper web components
     }
   `
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit {
+  private projectsService = inject(ProjectsService);
+  featuredProjects: Project[] = [];
+  loading = true;
+  error: string | null = null;
+
+  ngOnInit() {
+    this.loadFeaturedProjects();
+  }
+
+  private loadFeaturedProjects() {
+    this.projectsService.getProjects().subscribe({
+      next: (projects) => {
+        this.featuredProjects = projects
+          .slice(0, 4) // Get first 4 projects
+          .map(project => ({
+            ...project,
+            time: new Date(project.time) // Convert date string
+          }));
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading projects:', error);
+        this.error = 'Failed to load featured projects';
+        this.loading = false;
+      }
+    });
+  }
+
   ngAfterViewInit() {
-    // Optional: Add custom initialization if needed
+    this.initializeSwiper();
+  }
+
+  private initializeSwiper() {
     const swiperEl = document.querySelector('swiper-container') as SwiperContainer;
 
-    // Object with parameters
     const swiperParams = {
       injectStyles: [
-        `
-        .swiper-button-next,
-        .swiper-button-prev {
+        `.swiper-button-next, .swiper-button-prev {
           background-color: rgba(0,0,0,0.5);
-          padding: 16px; border-radius: 50%;
-        }
-        `
+          padding: 16px;
+          border-radius: 50%;
+        }`
       ],
+      // Update Swiper when slides change
+      observer: true,
+      observeParents: true
     };
 
-    // Assign parameters to swiper element
     Object.assign(swiperEl, swiperParams);
-
-    // Initialize swiper
     swiperEl.initialize();
   }
 }

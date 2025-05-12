@@ -2,10 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { CommonModule, NgFor, NgIf, } from '@angular/common';
 import { RouterModule, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { HttpClient, provideHttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Contact } from './contact.interface';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { ContactService } from './contact.service';
 
 @Component({
   selector: 'app-contact',
@@ -274,14 +272,10 @@ import { map, switchMap } from 'rxjs/operators';
 export class ContactComponent {
   @ViewChild('contactForm') contactForm!: NgForm;
 
-
   loading = false;
-
   errorMessage = '';
-
   successMessage = '';
 
-  // Initialize characterModel
   contactModel: Contact = {
     fName:    '',
     lName:    '',
@@ -292,17 +286,21 @@ export class ContactComponent {
     employer: false
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private contactService: ContactService) {}
 
-  // get mailing server url
-  /*getApiBaseUrl(): Observable<string> {
-    return this.http.get<{ apiBase: string }>('/config.json').pipe(
-      map(config => config.apiBase)
-    );
-  }*/
-
-  resetForm(form: NgForm) : void {
+  resetForm(form: NgForm): void {
     form.resetForm();
+  }
+
+  private handleResponse(form: NgForm): void {
+    this.successMessage = 'Message sent successfully!';
+    this.resetForm(form);
+    this.loading = false;
+  }
+
+  private handleError(err: Error): void {
+    this.errorMessage = err.message;
+    this.loading = false;
   }
 
   sendMail(form: NgForm): void {
@@ -310,32 +308,18 @@ export class ContactComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.http.post<Contact>('/api/send-email', this.contactModel)
+    this.contactService.sendEmail(this.contactModel)
       .subscribe({
-        next: (res) => {
-          this.successMessage = 'Message sent successfully!';
-          this.resetForm(form);
-          this.loading = false;
-        },
-        error: (err: HttpErrorResponse) => {
-          this.errorMessage = this.parseError(err);
-          this.loading = false;
-        }
+        next: () => this.handleResponse(form),
+        error: (err: Error) => this.handleError(err)
       });
   }
 
-  private parseError(error: HttpErrorResponse): string {
-    if (error.error instanceof ErrorEvent) {
-      return `Client error: ${error.error.message}`;
+  onSubmit(form: NgForm): void {
+    if (form.valid) {
+      this.sendMail(form);
+    } else {
+      this.errorMessage = 'Please fill in all required fields correctly';
     }
-    if (error.status === 0) {
-      return 'Connection error - check network';
-    }
-    return error.error?.message || error.message || 'Unknown server error';
-  }
-
-  onSubmit(form: NgForm) {
-    if (form.valid) this.sendMail(form);
-    else this.errorMessage = 'Please fill in all required fields correctly';
   }
 }

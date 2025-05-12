@@ -165,7 +165,7 @@ import { RouterLink, RouterModule } from '@angular/router';
 
             <section class="section image">
               <h2 class="heading" style="display: none; visibility: hidden;">portfolio image</h2>
-              <img class="resume-image" src="/images/exenreco-resume.png">
+              <img class="resume-image" src="/assets/images/exenreco-resume.png">
             </section>
 
             <section class="section summary">
