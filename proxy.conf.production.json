@@ -1,0 +1,22 @@
+{
+  "/config.json": {
+    "target":       "https://portfolio-server-u87c.onrender.com/",
+    "secure":       true,
+    "changeOrigin": true
+  },
+  "/api": {
+    "target":       "https://portfolio-server-u87c.onrender.com/",
+    "secure":       true,
+    "changeOrigin": true
+  },
+  "/api/*": {
+    "target":       "https://portfolio-server-u87c.onrender.com/",
+    "secure":       true,
+    "changeOrigin": true
+  },
+  "/mail/*": {
+    "target":       "https://portfolio-server-u87c.onrender.com/",
+    "secure":       true,
+    "changeOrigin": true
+  }
+}

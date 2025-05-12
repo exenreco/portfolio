@@ -43,6 +43,16 @@
             "production": {
               "baseHref":   "/portfolio/",
               "deployUrl":  "/portfolio/",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "proxy.conf.json",
+                  "with": "proxy.conf.production.json"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -69,14 +79,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "portfolio:build:production"
+              "buildTarget": "portfolio:build:production",
+              "proxyConfig": "proxy.conf.production.json"
             },
             "development": {
-              "buildTarget": "portfolio:build:development"
+              "buildTarget": "portfolio:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development",
-          "options": { "proxyConfig": "proxy.conf.json" }
+          "options": {}
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
