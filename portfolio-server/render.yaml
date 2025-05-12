@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: portfolio-server
+    runtime: node
+    buildCommand: npm run build
+    startCommand: npm start
+    env: node
+    envVars:
+      - key: DEV_PORT
+        value: 4200
+      - key: DEV_URL
+        value: http://localhost
+      - key: PROD_URL
+        value: https://exenreco.github.io
+      - key: SERVER_PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: SMTP_HOST
+        value: smtp.mail.yahoo.com
+      - key: SMTP_PORT
+        value: 465
+      - key: SMTP_SECURE
+        value: true
+      - key: SMTP_USER
+        value: exenreco19@yahoo.com
+      - key: SMTP_PASS
+        value: hnvdgtvowlrnqacy
+      - key: SMTP_FROM
+        value: exenreco19@yahoo.com
