@@ -11,16 +11,17 @@ import { Marker } from './interface';
   template: `
     <!-- GOOGLE MAPS -->
     <google-map #googleMap
-                [center]="center"
-                [zoom]="zoom"
-                [options]="mapOptions"
-                class="google-map google-map-container">
+      [center]="center"
+      [zoom]="zoom"
+      [options]="mapOptions"
+      class="google-map google-map-container"
+    >
       <ng-container *ngFor="let marker of markers">
         <map-advanced-marker
           [position]="marker.position"
           [title]="marker.title"
           (gmp-click)="onMarkerClick(marker, $any($event).detail)">
-          <div class="custom-marker">{{ marker.label }}</div>
+          <div class="custom-marker">{{ marker.label || '' }}</div>
         </map-advanced-marker>
       </ng-container>
     </google-map>
@@ -53,7 +54,7 @@ import { Marker } from './interface';
   `
 })
 export class GoogleMapComponent implements AfterViewInit {
-  @ViewChild('googleMap') map!: GoogleMap | any;  // picks up real or mock
+  @ViewChild('googleMap') map!: GoogleMap;  // picks up real or mock
 
   @Input() center: google.maps.LatLngLiteral = { lat: 41.2565, lng: -95.9345 };
   @Input() zoom = 10;
@@ -65,7 +66,7 @@ export class GoogleMapComponent implements AfterViewInit {
   }
 
   mapOptions: google.maps.MapOptions = {
-    mapId: 'map-0',
+    mapId: '5e590b20b21b172c86905bb2',
     disableDefaultUI: true,
     zoomControl: true,
     scrollwheel: true,
