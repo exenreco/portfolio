@@ -1,4 +1,3 @@
-// google-map.component.ts
 import { Component, HostListener, ViewChild,AfterViewInit, Input, ViewEncapsulation, OnInit } from '@angular/core';
 import { GoogleMap, MapAdvancedMarker } from '@angular/google-maps';
 import { NgFor, NgIf } from '@angular/common';
@@ -86,8 +85,8 @@ export class GoogleMapComponent implements OnInit {
     // configure the loader
     const loader = new Loader({
       apiKey: environment.googleMapsApiKey,
-      version: 'weekly',       // or 'beta' if you need v4 features
-      libraries: ['places'],   // add geometry if you need it
+      version: 'weekly',       // or 'beta' when v4 features needed
+      libraries: ['places'],
     });
     // actually injects the <script> and resolves when global `google` is ready
     await loader.importLibrary("core");
