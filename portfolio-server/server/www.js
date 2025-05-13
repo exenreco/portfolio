@@ -193,7 +193,7 @@ const
   *
   * @dev Exenreco Bell
   */
-  ProdURL = process.env.PROD_URL || 'https://exenreco.github.io/portfolio/',
+  ProdURL = process.env.PROD_URL || 'https://portfolio-server-u87c.onrender.com/',
 
 
   serverOptions = {
