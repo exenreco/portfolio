@@ -35,6 +35,17 @@
             "production": {
               "baseHref":   "/portfolio/",
               "deployUrl":  "/portfolio/",
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/env/env.ts",
+                  "with":    "src/app/env/env.prod.ts"
+                },
+                {
+                  "replace": "proxy.conf.json",
+                  "with":    "proxy.conf.production.json"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -46,8 +57,7 @@
                   "maximumWarning": "8kB",
                   "maximumError": "10kB"
                 }
-              ],
-              "outputHashing": "all"
+              ]
             },
             "development": {
               "optimization": false,

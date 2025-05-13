@@ -10,11 +10,11 @@ const
 
 // ── Load .env before any imports ──
 //dotenv.config({ path: path.resolve(__dirname, '../.env') });
-
-console.log('SERVER');
-console.log('=========================================')
-console.log('SMTP_HOST=', process.env.SMTP_HOST);
-console.log('SMTP_PORT=', process.env.SMTP_PORT);
+console.log('SERVER @see Protocol', process.env.PROTOCOL),
+console.log('SERVER @see Address', process.env.PRODUCTION_ADDRESS),
+console.log('SERVER @see Secure port', process.env.SECURE_PORT),
+console.log('SERVER @see Un-secure port', process.env.UNSECURE_PORT);
+console.log('=========================================');
 
 /**
  ** Module Dependencies
@@ -163,7 +163,22 @@ const
   *
   * @dev Exenreco Bell
   */
-  ServerPort =  normalizePort(process.env.SERVER_PORT || 3000),
+  ServerPort =  normalizePort(process.env.SECURE_PORT || 3000),
+
+  /**
+  * SERVER PORT UNSECURE (Express Port number)
+  *
+  * The defined server port for unsecure requests.
+  *
+  * @type variable
+  *
+  * @date May 10, 2025
+  *
+  * @since version 1.0.0
+  *
+  * @dev Exenreco Bell
+  */
+  ServerPortUnsecure =  normalizePort(process.env.UNSECURE_PORT || 80),
 
   /**
   * DEV URL (Express LOCAL CROSS ORIGIN URL)
@@ -178,7 +193,10 @@ const
   *
   * @dev Exenreco Bell
   */
-  DevURL = process.env.DEV_URL || 'http://localhost',
+  DevURL = `${ process.env.PROTOCOL && process.env.PROTOCOL.toLowerCase() === 'http'
+      ? `${process.env.PROTOCOL.toLowerCase()}://localhost/${DevPort}`
+      : `http://localhost/${DevPort}`
+  }`,
 
   /**
   * PROD URL (Express LOCAL CROSS ORIGIN URL)
@@ -193,7 +211,7 @@ const
   *
   * @dev Exenreco Bell
   */
-  ProdURL = process.env.PROD_URL || 'https://portfolio-server-u87c.onrender.com/',
+  ProdURL = process.env.PRODUCTION_ADDRESS || DevURL,
 
 
   serverOptions = {
@@ -219,23 +237,24 @@ const
   httpsServer = https.createServer(serverOptions, app),
 
   httpServer = http.createServer(app)
-  /*httpServer = http.createServer((req, res) => {
-    // Redirect every request to the same URL on HTTPS
-    const host = req.headers.host?.replace(/:\d+$/, `:${ServerPort}`);
-    res.writeHead(301, { Location: `https://${host}${req.url}` });
-    res.end();
-  })*/
 ;
 
 /**
  ** Sets the server port or defaults to -> 3000
  ** =========================================================================*/
-app.set('port', ServerPort),
+//app.set('port', ServerPort),
 
 /**
  ** Enable CORS for Angular development server
  ** =========================================================================*/
-app.use(cors({ origin: [ `http://${DevURL}:${DevPort}`, `https://${ProdURL}` ] })),
+app.use(cors({
+  origin: [`${DevURL}`, `${ProdURL}`], //"*",
+  methods: ['GET','POST','PUT','DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type','Authorization'],
+  credentials: true
+})),
 
 /**
  ** Ensure server is parsing JSON
@@ -267,21 +286,30 @@ app.use('/api/projects', projectsAPI),
 /**
  ** Sets the server 404 Handler -> Fall-through routes
  ** =========================================================================*/
-app.use((req, res) => res.status(404).json({ error: 'Not found' })),
+app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 
-/**
- ** Create Server -> creates the HTTPS server instance.
- ** =========================================================================*/
-httpsServer
-  .listen(ServerPort, () => console.log(`The HTTP Server has started!`) )
-  .on('error', onError)
-  .on('listening', () => onListening('Express Server', httpsServer));
 
-/**
- ** Create Server -> creates HTTP the server instance.
- ** =========================================================================*/
-httpServer
-  .listen(80, () => console.log('   - HTTP -> HTTPS redirector listening on port 80'));
-  /*.listen(ServerPort, () => console.log(`The HTTP Server has started!`) )
-  .on('error', onError)
-  .on('listening', () => onListening('Express Server', httpServer));*/
+if (ProdURL && (ProdURL === 'https://localhost' || ProdURL === 'http://localhost' ) ) {
+  /**
+   ** Create Server -> unsecure server instance.
+   ** =========================================================================*/
+  httpServer
+    .listen(ServerPortUnsecure, () => onListening('Development Server', httpServer))
+    .on('error', onError)
+    .on('listening', () => console.log('   - The server is ready to be queried!'));
+
+} else {
+  /**
+   ** Create Server -> creates the HTTPS server instance.
+   ** =========================================================================*/
+  httpsServer
+    .listen(ServerPort, () => console.log(`The HTTP Server has started!`) )
+    .on('error', onError)
+    .on('listening', () => onListening('Express Server', httpsServer));
+
+  /**
+   ** Create Server -> creates HTTP the server instance for redirects.
+   ** =========================================================================*/
+  httpServer
+    .listen(ServerPortUnsecure, () => onListening('Redirect Server (un-secure Connections)', httpServer));
+}

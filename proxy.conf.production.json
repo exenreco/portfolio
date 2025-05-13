@@ -1,22 +1,10 @@
 {
-  "/config.json": {
-    "target":       "https://portfolio-server-u87c.onrender.com/",
-    "secure":       false,
-    "changeOrigin": true
-  },
-  "/api": {
-    "target":       "https://portfolio-server-u87c.onrender.com/",
-    "secure":       false,
-    "changeOrigin": true
-  },
   "/api/*": {
-    "target":       "https://portfolio-server-u87c.onrender.com/",
+    "target":       "https://portfolio-server-u87c.onrender.com",
     "secure":       false,
-    "changeOrigin": true
-  },
-  "/mail/*": {
-    "target":       "https://portfolio-server-u87c.onrender.com/",
-    "secure":       false,
-    "changeOrigin": true
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    }
   }
 }
