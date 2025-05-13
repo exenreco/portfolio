@@ -29,6 +29,7 @@ import { TruncatePipe } from '../truncate.pipe';
       width: 95%;
       margin: auto;
     }
+    .intro { margin-top: .4em; }
 
     .masonry-grid {
       gap: 1.5rem;

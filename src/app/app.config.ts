@@ -3,6 +3,8 @@ import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@a
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { MyHttpInterceptor } from './contact/http.interceptor';
+import { environment } from './google-map/environment.prod';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -13,6 +15,9 @@ export const appConfig: ApplicationConfig = {
       useClass: MyHttpInterceptor,
       multi: true
     },
-
+    {
+      provide: 'GOOGLE_MAPS_API_KEY',
+      useValue: environment.googleMapsApiKey
+    }
   ]
 };

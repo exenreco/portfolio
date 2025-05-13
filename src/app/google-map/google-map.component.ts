@@ -1,32 +1,37 @@
-import { Component, HostListener, ViewChild, AfterViewInit, Input, ViewEncapsulation } from '@angular/core';
+// google-map.component.ts
+import { Component, HostListener, ViewChild,AfterViewInit, Input, ViewEncapsulation, OnInit } from '@angular/core';
 import { GoogleMap, MapAdvancedMarker } from '@angular/google-maps';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Marker } from './interface';
+import { Loader } from '@googlemaps/js-api-loader';
+import { environment } from './environment.prod';
 
 @Component({
   selector: 'app-google-map',
   standalone: true,
-  imports: [GoogleMap, MapAdvancedMarker, NgFor],
+  imports: [GoogleMap, MapAdvancedMarker, NgFor, NgIf],
   encapsulation: ViewEncapsulation.None,
   template: `
-    <!-- GOOGLE MAPS -->
-    <google-map #googleMap
-      [center]="center"
-      [zoom]="zoom"
-      [options]="mapOptions"
-      class="google-map google-map-container"
-    >
-      <ng-container *ngFor="let marker of markers">
-        <map-advanced-marker
-          [position]="marker.position"
-          [title]="marker.title"
-          (gmp-click)="onMarkerClick(marker, $any($event).detail)">
-          <div class="custom-marker">{{ marker.label || '' }}</div>
-        </map-advanced-marker>
-      </ng-container>
-    </google-map>
+    <!-- Only render the map once google.maps is available -->
+    <ng-container *ngIf="mapLoaded; else loading">
+      <google-map #googleMap
+        [center]="center"
+        [zoom]="zoom"
+        [options]="mapOptions"
+        class="google-map-container">
+        <ng-container *ngFor="let m of markers">
+          <map-advanced-marker
+            [position]="m.position"
+            [title]="m.title"
+            (gmp-click)="onMarkerClick(m, $any($event).detail)">
+            <div class="custom-marker">{{ m.label || '' }}</div>
+          </map-advanced-marker>
+        </ng-container>
+      </google-map>
+    </ng-container>
+    <ng-template #loading><p>Loading map…</p></ng-template>
   `,
-  styles: `
+  styles: [`
     :host {
       width:100%;
       height:160px;
@@ -51,39 +56,49 @@ import { Marker } from './interface';
       padding: 8px !important;
       background-color: white !important;
     }
-  `
+  `]
 })
-export class GoogleMapComponent implements AfterViewInit {
-  @ViewChild('googleMap') map!: GoogleMap;  // picks up real or mock
-
+export class GoogleMapComponent implements OnInit {
+  @ViewChild('googleMap') map!: GoogleMap;
   @Input() center: google.maps.LatLngLiteral = { lat: 41.2565, lng: -95.9345 };
   @Input() zoom = 10;
   @Input() markers: Marker[] = [];
 
-  @HostListener('window:initMapError')
-  onMapError() {
-    console.error('Failed to load Google Maps API');
-  }
+  mapLoaded = false;
 
   mapOptions: google.maps.MapOptions = {
     mapId: '5e590b20b21b172c86905bb2',
-    disableDefaultUI: true,
     zoomControl: true,
     scrollwheel: true,
+    disableDefaultUI: true
   };
 
-  ngAfterViewInit() {
-    // Access map instance after view init
-    // console.log(this.map.googleMap);
+  async ngOnInit() {
+    try {
+      await this.loadGoogleMaps();
+      this.mapLoaded = true;
+    } catch (e) {
+      console.error('Google Maps failed to load:', e);
+    }
   }
 
-  onMarkerClick(marker: Marker, mapMouseEvent: google.maps.MapMouseEvent) {
-    if (!mapMouseEvent.latLng) {
-      console.warn('Click did not include a latLng');
-      return;
-    }
-    console.log('Marker clicked:', marker);
-    console.log('Coordinates:', mapMouseEvent.latLng.toJSON());
-    console.log('DOM Event:', mapMouseEvent.domEvent);
+  private async loadGoogleMaps() {
+    // configure the loader
+    const loader = new Loader({
+      apiKey: environment.googleMapsApiKey,
+      version: 'weekly',       // or 'beta' if you need v4 features
+      libraries: ['places'],   // add geometry if you need it
+    });
+    // actually injects the <script> and resolves when global `google` is ready
+    await loader.importLibrary("core");
+  }
+
+  onMarkerClick(marker: Marker, event: google.maps.MapMouseEvent) {
+    console.log('Clicked', marker, event.latLng?.toJSON());
+  }
+
+  @HostListener('window:initMapError')
+  onMapError() {
+    console.error('Failed to load Google Maps API');
   }
 }
