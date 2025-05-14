@@ -1,9 +1,8 @@
-console.log('ProjectsAPI sees SMTP_HOST=', process.env.SMTP_HOST);
-console.log('ProjectsAPI sees SMTP_PORT=', process.env.SMTP_PORT);
-
+import chalk from 'chalk';
 import express from 'express';
 import  PROJECTS from './projects.collection.js';
 import { body, validationResult, param } from 'express-validator';
+import { warn, error, success, message } from '../chalk.config.js';
 
 const
 nextId = 3,
@@ -138,7 +137,7 @@ router.delete('/:id',
 
 // Router-scoped error handler
 router.use((err, req, res, next) => {
-  console.error('ProjectsAPI error:', err);
+  console.error(error('ProjectsAPI error:', err));
   res.status(500).json({ error: 'Server error', details: err.message });
 });
 

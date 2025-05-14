@@ -1,6 +1,6 @@
-export const EnvProductionMailer = {
-  source:     'https://portfolio-server-u87c.onrender.com'
-};
 export const EnvDevelopmentMailer = {
-  source:     'https://localhost:3000'
+  mailUrl:     'http://localhost:3000'
+};
+export const EnvProductionMailer = {
+  mailUrl:     'https://portfolio-server-u87c.onrender.com'
 };

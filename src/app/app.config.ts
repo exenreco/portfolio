@@ -1,9 +1,12 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ContactHttpInterceptor } from './contact/http.interceptor';
+import { LoadingHttpInterceptor } from './loading/http.interceptor';
+import { EnvGoogleMapsAPIKey } from './env/maps.env';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { MyHttpInterceptor } from './contact/http.interceptor';
-import { environment } from './google-map/environment.prod';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,12 +15,17 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: MyHttpInterceptor,
+      useClass: ContactHttpInterceptor,
       multi: true
     },
     {
       provide: 'GOOGLE_MAPS_API_KEY',
-      useValue: environment.googleMapsApiKey
+      useValue: EnvGoogleMapsAPIKey.ApiKey,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoadingHttpInterceptor,
+      multi: true
     }
   ]
 };

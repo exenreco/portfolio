@@ -378,6 +378,9 @@
     height: calc(90% - .8em);
     overflow: hidden;
   }
+  .error { color: #ff4444; }
+  .loading { font-style: italic; }
+  .nav-list a { display: block; margin: 4px 0; }
 
   /* Search form rules
   **************************************************************************/
@@ -583,6 +586,7 @@
     }
   }
 </style>
+<app-loading></app-loading>
 <header class="site-header" #siteHeader [ngClass]="{'sticky': isSticky}">
   <div class="top">
     <div class="container">
@@ -610,7 +614,7 @@
               <form class="site-search" (submit)="performSearch($event)">
                 <label for="search" hidden>Search</label>
                 <div class="field-container">
-                  <input type="text" name="search" [(ngModel)]="searchTerm" placeholder="Search pages, projects...">
+                  <input type="search" name="search" [(ngModel)]="searchTerm" maxlength="100" placeholder="Search pages, projects...">
                   <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
               </form>
@@ -639,27 +643,30 @@
       <form class="site-search" (submit)="performSearch($event)">
         <label for="search" hidden>Search</label>
         <div class="field-container">
-          <input type="text" name="search" [(ngModel)]="searchTerm" placeholder="Search pages, projects...">
+          <input type="search" name="search" [(ngModel)]="searchTerm" maxlength="100" placeholder="Search pages, projects...">
           <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
       </form>
       <span class="section-title">Quick Links:</span>
       <nav class="nav-list">
-        <a class="link" routerLink="/about" routerLinkActive="active">About</a>
-        <a class="link" routerLink="/contact" routerLinkActive="active">Contact</a>
         <a class="link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-        <a class="link" routerLink="/projects" routerLinkActive="active">Projects</a>
+        <a class="link" routerLink="/contact" routerLinkActive="active">Contact</a>
         <a class="link" routerLink="/resume" routerLinkActive="active">Resume</a>
+        <a class="link" routerLink="/projects" routerLinkActive="active">Projects</a>
       </nav>
     </li>
     <li class="column footer-nav projects">
       <span class="section-title">Recent Projects:</span>
-      <nav class="nav-list">
-        <a class="link" routerLink="/about">TypeScript with Angular</a>
-        <a class="link" routerLink="/contact">NoSQL With MongoDB</a>
-        <a class="link" routerLink="/home">Rhythmz WordPress Theme</a>
-        <a class="link" routerLink="/projects">RESTFull APIs</a>
-        <a class="link" routerLink="/resume">Enterprize Javascript</a>
+      <!-- Fetch 5 project links -->
+      <nav *ngIf="loading" class="nav-list"><span class="loading">Loading projects...</span></nav>
+      <nav *ngIf="error" class="nav-list"><span class="error">{{ error }}</span></nav>
+      <nav class="nav-list" *ngIf="!loading && !error">
+        <a *ngFor="let project of recentProjects"
+          class="link"
+          routerLink="/projects/{{ project.slug }}"
+          routerLinkActive="active">
+          {{ project.title }}
+        </a>
       </nav>
     </li>
     <li class="column location">

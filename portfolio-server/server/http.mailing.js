@@ -1,7 +1,3 @@
-console.log('MailingAPI sees SMTP_HOST=', process.env.SMTP_HOST);
-console.log('MailingAPI sees SMTP_PORT=', process.env.SMTP_PORT);
-
-
 import express from 'express';
 import nodemailer from 'nodemailer';
 import { body, validationResult } from 'express-validator';

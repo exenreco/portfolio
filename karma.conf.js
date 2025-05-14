@@ -13,10 +13,14 @@ __dirname = path.dirname(__filename);
 export default function (config) {
   config.set({
     basePath: '',
+    files: [
+      { pattern: '/portfolio-server', watched: false, type: 'module' },
+      { pattern: '/dist', watched: false, type: 'module' }
+    ],
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
       karmaJasmine,
-      // chromeLauncher,
+      //chromeLauncher,
       firefoxLauncher,
       jasmineHtmlReporter,
       coverage,
@@ -24,14 +28,16 @@ export default function (config) {
     ],
 
     client: {
-      jasmine: { // random: false, seed: 4321
+      jasmine: {
+        // you can add configuration options for Jasmine here
+        // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
+        // for example, you can disable the random execution with `random: false`
+        // or set a specific seed with `seed: 4321`
       },
       clearContext: false
     },
-
     jasmineHtmlReporter: {
-      suppressAll: false,
-      suppressFailed: false
+      suppressAll: true
     },
     coverageReporter: {
       dir: path.join(__dirname, './coverage/portfolio'),
@@ -43,12 +49,6 @@ export default function (config) {
     },
     reporters: ['progress', 'kjhtml'],
     browsers: ['Firefox'],
-    customLaunchers: {
-      FirefoxHeadless: {
-        base: 'Firefox',
-        flags: ['-headless', '--no-remote']
-      }
-    },
     restartOnFileChange: true
   });
 }

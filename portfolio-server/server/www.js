@@ -7,25 +7,18 @@ const
   __dirname = path.dirname(__filename)
 ;
 
-
-// ── Load .env before any imports ──
-//dotenv.config({ path: path.resolve(__dirname, '../.env') });
-console.log('SERVER @see Protocol', process.env.PROTOCOL),
-console.log('SERVER @see Address', process.env.PRODUCTION_ADDRESS),
-console.log('SERVER @see Secure port', process.env.SECURE_PORT),
-console.log('SERVER @see Un-secure port', process.env.UNSECURE_PORT);
-console.log('=========================================');
-
 /**
  ** Module Dependencies
  ** =========================================================================*/
 import fs from 'fs';
 import cors from 'cors';
 import http from 'http';
+import chalk from 'chalk';
 import https from 'https';
 import express from 'express';
 import mailingAPI from './http.mailing.js';
 import projectsAPI from './http.projects.js';
+import { warn, error, success, message } from '../chalk.config.js';
 
 
 const
@@ -92,11 +85,11 @@ const
     // handle specific listen errors with friendly messages
     switch (error.code) {
       case 'EACCES':
-        console.error(bind + ' requires elevated privileges');
+        console.error(error(bind + ' requires elevated privileges'));
         process.exit(1);
         break;
       case 'EADDRINUSE':
-        console.error(bind + ' is already in use');
+        console.error(error(bind + ' is already in use'));
         process.exit(1);
         break;
       default:
@@ -126,13 +119,15 @@ const
    * @dev Exenreco Bell / R.Krasso
    */
   onListening = (name, server) => {
-    const addr = server.address();
-    if (!addr) {
-      console.log(`   - ${name} is listening (address info not available)`);
-      return;
-    }
-    const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-    console.log(`   - The ${name} is listening on ${bind}`);
+    const
+    addr = server.address(),
+    bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+
+    if (!addr) return console.warn(
+      warn(`(OK): ${name} is listening (address info not available)`)
+    );
+
+    console.log(success(`(OK): The ${name} is listening on ${bind}`));
   },
 
  /**
@@ -194,8 +189,8 @@ const
   * @dev Exenreco Bell
   */
   DevURL = `${ process.env.PROTOCOL && process.env.PROTOCOL.toLowerCase() === 'http'
-      ? `${process.env.PROTOCOL.toLowerCase()}://localhost/${DevPort}`
-      : `http://localhost/${DevPort}`
+      ? `${process.env.PROTOCOL.toLowerCase()}://localhost:${DevPort}`
+      : `http://localhost:${DevPort}`
   }`,
 
   /**
@@ -234,27 +229,21 @@ const
    */
   app = express(),
 
-  httpsServer = https.createServer(serverOptions, app),
-
-  httpServer = http.createServer(app)
+  // cores options
+  corsProps = {
+    origin: [`${DevURL}`, `${ProdURL}`], //"*",
+    methods: ['GET','POST','PUT','DELETE'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    allowedHeaders: ['Content-Type','Authorization'],
+    credentials: true
+  }
 ;
-
-/**
- ** Sets the server port or defaults to -> 3000
- ** =========================================================================*/
-//app.set('port', ServerPort),
 
 /**
  ** Enable CORS for Angular development server
  ** =========================================================================*/
-app.use(cors({
-  origin: [`${DevURL}`, `${ProdURL}`], //"*",
-  methods: ['GET','POST','PUT','DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type','Authorization'],
-  credentials: true
-})),
+app.use(cors({...corsProps})),
 
 /**
  ** Ensure server is parsing JSON
@@ -288,28 +277,50 @@ app.use('/api/projects', projectsAPI),
  ** =========================================================================*/
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 
+const
+  httpsServer = https.createServer(serverOptions, app), // secure server
+  httpServer = http.createServer(app) // unsecure server
+;
 
 if (ProdURL && (ProdURL === 'https://localhost' || ProdURL === 'http://localhost' ) ) {
   /**
    ** Create Server -> unsecure server instance.
    ** =========================================================================*/
   httpServer
-    .listen(ServerPortUnsecure, () => onListening('Development Server', httpServer))
+    .listen(ServerPortUnsecure, () => onListening('(Backend) Development Server', httpServer))
     .on('error', onError)
-    .on('listening', () => console.log('   - The server is ready to be queried!'));
-
+    .on('listening', () => console.log(
+      chalk.green.bold(
+        `- The server is ready to be queried, @see:`,
+        chalk.blue.underline.bold(`${ProdURL}:${ServerPortUnsecure}\n`)
+      ),
+      chalk.green.bold(`- @see Mailer config SMTP_HOST: ${process.env.SMTP_HOST}\n`),
+      chalk.green.bold(`- @see Mailer config SMTP_PORT: ${process.env.SMTP_PORT}\n`)
+    ));
 } else {
   /**
    ** Create Server -> creates the HTTPS server instance.
    ** =========================================================================*/
   httpsServer
-    .listen(ServerPort, () => console.log(`The HTTP Server has started!`) )
+    .listen(ServerPort, () => onListening('(Backend) Production Server', httpServer) )
     .on('error', onError)
-    .on('listening', () => onListening('Express Server', httpsServer));
+    .on('listening', () => console.log(
+      chalk.green.bold(
+        `- The server is ready to be queried, @see:`,
+        chalk.blue.underline.bold(`${ProdURL}:${ServerPort}\n`)
+      ),
+      chalk.green.bold(`- @see Mailer config SMTP_HOST: ${process.env.SMTP_HOST}\n`),
+      chalk.green.bold(`- @see Mailer config SMTP_PORT: ${process.env.SMTP_PORT}\n`)
+  ));
 
   /**
    ** Create Server -> creates HTTP the server instance for redirects.
    ** =========================================================================*/
   httpServer
-    .listen(ServerPortUnsecure, () => onListening('Redirect Server (un-secure Connections)', httpServer));
+    .listen(ServerPortUnsecure, () => console.log(
+      chalk.green.bold(
+        '- Unsecure connections will be redirected to @see:',
+        chalk.blue.underline.bold(`${ProdURL}:${ServerPort}`)
+      )
+    ));
 }

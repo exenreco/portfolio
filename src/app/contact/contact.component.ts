@@ -134,10 +134,25 @@ import { ContactService } from './contact.service';
     }
     .ng-invalid.ng-touched:not(form) {
       border-color: #dc3545 !important;
+      animation: shake 0.5s ease-in-out;
     }
-
     .ng-valid.ng-touched:not(form) {
       border-color: #28a745 !important;
+    }
+    .error-message {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      padding-left: 0.25rem;
+    }
+    .required {
+      color: #dc3545;
+      margin-left: 0.25rem;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
     }
   `,
   template: `
@@ -173,52 +188,66 @@ import { ContactService } from './contact.service';
           <div class="row">
             <span class="field">
               <label for="fName"><span class="required">*</span> First Name:</label>
-              <input #fName
+              <input #fName="ngModel"
                 type="text"
                 name="fName"
                 placeholder="John"
                 [(ngModel)]="contactModel.fName"
                 required
               >
+              <div *ngIf="fName.invalid && (fName.touched || contactForm.submitted)" class="error-message">
+                <span *ngIf="fName.errors?.['required']">First name is required</span>
+              </div>
             </span>
             <span class="field">
               <label for="lName"><span class="required">*</span> Last Name:</label>
-              <input #lName
+              <input #lName="ngModel"
                 name="lName"
                 type="text"
                 placeholder="Doe"
                 [(ngModel)]="contactModel.lName"
                 required
               >
+              <div *ngIf="lName.invalid && (lName.touched || contactForm.submitted)" class="error-message">
+                <span *ngIf="lName.errors?.['required']">Last name is required</span>
+              </div>
             </span>
           </div>
 
           <div class="row">
             <span class="field">
               <label for="email"><span class="required">*</span> Email:</label>
-              <input #email
+              <input #email="ngModel"
                 type="email"
                 name="email"
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                 placeholder="example@mail.com"
                 [(ngModel)]="contactModel.email"
                 required
               >
+              <div *ngIf="email.invalid && (email.touched || contactForm.submitted)" class="error-message">
+                <span *ngIf="email.errors?.['required']">Email is required</span>
+                <span *ngIf="email.errors?.['email']">Enter a valid email address</span>
+              </div>
             </span>
             <span class="field">
               <label for="phone">Phone:</label>
-              <input #phone
+              <input #phone="ngModel"
                 type="tel"
                 name="phone"
                 placeholder="(000) 000-0000"
                 [(ngModel)]="contactModel.phone"
                 pattern="^(\\(\\d{3}\\)|\\d{3})[-.\\s]?\\d{3}[-.\\s]?\\d{4}$"
               >
+              <div *ngIf="phone.invalid && (phone.touched || contactForm.submitted)" class="error-message">
+                <span *ngIf="phone.errors?.['pattern']">Phone number must match format: (123) 456-7890</span>
+              </div>
             </span>
           </div>
 
           <div class="row">
             <label for="employer" style="margin: auto; width: 100%; text-align: left;">
-              <input #employer
+              <input #employer="ngModel"
                 name="employer"
                 type="checkbox"
                 class="employer"
@@ -230,22 +259,28 @@ import { ContactService } from './contact.service';
           <div class="column">
             <span class="field">
               <label for="subject"><span class="required">*</span> Subject</label>
-              <input #subject
+              <input #subject="ngModel"
                 name="subject"
                 type="text"
                 placeholder="Message Subject"
                 [(ngModel)]="contactModel.subject"
                 required
               >
+              <div *ngIf="subject.invalid && (subject.touched || contactForm.submitted)" class="error-message">
+                <span *ngIf="subject.errors?.['required']">Subject is required</span>
+              </div>
             </span>
             <span class="field">
               <label for="message"><span class="required">*</span> Message</label>
-              <textarea #message
+              <textarea #message="ngModel"
                 name="message"
                 placeholder="Type your message here..."
                 [(ngModel)]="contactModel.message"
                 required
               ></textarea>
+              <div *ngIf="message.invalid && (message.touched || contactForm.submitted)" class="error-message">
+                <span *ngIf="message.errors?.['required']">Message is required</span>
+              </div>
             </span>
           </div>
 
@@ -316,10 +351,13 @@ export class ContactComponent {
   }
 
   onSubmit(form: NgForm): void {
-    if (form.valid) {
-      this.sendMail(form);
-    } else {
-      this.errorMessage = 'Please fill in all required fields correctly';
-    }
+  if (form.valid) this.sendMail(form);
+  else {
+    this.errorMessage = 'Please correct the highlighted errors';
+    // Mark all fields as touched to show errors
+    Object.values(form.controls).forEach(control => {
+      control.markAsTouched();
+    });
   }
+}
 }

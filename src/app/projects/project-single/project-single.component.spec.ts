@@ -1,70 +1,93 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectSingleComponent } from './project-single.component';
-import { ActivatedRoute } from '@angular/router';
-import { provideRouter } from '@angular/router';
-import { PROJECTS } from '../projects.data'; // Import your actual projects data
+import { provideHttpClient } from '@angular/common/http';
+import { ActivatedRoute, ParamMap, convertToParamMap } from '@angular/router';
+import { ProjectsService } from '../projects.service';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { of, BehaviorSubject } from 'rxjs';
 
 describe('ProjectSingleComponent', () => {
-  let component: ProjectSingleComponent;
-  let fixture: ComponentFixture<ProjectSingleComponent>;
-  const mockSlug = PROJECTS[0].slug; // Get a valid slug from your data
+  let
+    fixture: ComponentFixture<ProjectSingleComponent>,
+    component: ProjectSingleComponent,
+    httpMock: HttpTestingController
+  ;
+
+  const
+    testSlug = 'rhythmz-theme',
+    paramMap$ = new BehaviorSubject<ParamMap>(convertToParamMap({ slug: testSlug })),
+    mockProject = {
+      id: 1,
+      slug: testSlug,
+      title: 'Test Project',
+      cover: 'test.jpg',
+      content: '<p>Project content</p>',
+      time: new Date().toISOString()
+    }
+  ;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProjectSingleComponent],
+      imports: [ ProjectSingleComponent ],
       providers: [
-        // Configure router
-        provideRouter([]),
-
-        // Mock ActivatedRoute with valid slug
+        provideHttpClient(),         //register the real HttpClient
+        provideHttpClientTesting(),  //register the testing backend
         {
           provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: {
-                get: (key: string) => mockSlug
-              }
-            }
-          }
-        }
+          useValue: { paramMap: paramMap$.asObservable() }
+        },
+        ProjectsService
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProjectSingleComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture    = TestBed.createComponent(ProjectSingleComponent);
+    component  = fixture.componentInstance;
+    httpMock   = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('└── Should create the component and find project', () => {
+    fixture.detectChanges();
+
+    const req = httpMock.expectOne(req =>
+      req.url.endsWith(`/api/projects/by-slug/${testSlug}`)
+    );
+    req.flush(mockProject);
+
     expect(component).toBeTruthy();
-    expect(component.project).toBeDefined();
-    expect(component.project?.slug).toBe(mockSlug);
+    expect(component.project?.slug).toBe(testSlug);
   });
 
-  it('└── Should handle missing project', () => {
-    // Override mock with invalid slug
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      imports: [ProjectSingleComponent],
-      providers: [
-        provideRouter([]),
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: {
-                get: (key: string) => 'invalid-slug'
-              }
-            }
-          }
-        }
-      ]
-    }).compileComponents();
+  it('└── Should create the component and load the project by slug', () => {
 
-    const invalidFixture = TestBed.createComponent(ProjectSingleComponent);
-    const invalidComponent = invalidFixture.componentInstance;
-    invalidFixture.detectChanges();
+  fixture.detectChanges();
+  const req = httpMock.expectOne(req =>
+    req.url.endsWith(`/api/projects/by-slug/${testSlug}`)
+  );
 
-    expect(invalidComponent.project).toBeUndefined();
-  });
+  expect(req.request.method).toBe('GET');
+  req.flush(mockProject);
+  fixture.detectChanges();
+
+  expect(component).toBeTruthy();
+  expect(component.project?.slug).toBe(testSlug);
+});
+
+it('└── Should handle project loading error', () => {
+  fixture.detectChanges();
+
+  const req = httpMock.expectOne(req =>
+    req.url.endsWith(`/api/projects/by-slug/${testSlug}`)
+  );
+
+  req.flush('Not found', { status: 404, statusText: 'Not Found' });
+
+  fixture.detectChanges();
+
+  expect(component.project).toBeUndefined();
+  expect(component.error).toContain('Project not found');
+});
 });

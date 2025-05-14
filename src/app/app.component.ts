@@ -1,26 +1,25 @@
-import { Component, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, HostListener, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { RouterModule, RouterOutlet, RouterLink, Router} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GoogleMapComponent } from './google-map/google-map.component';
-import { ProjectSingleComponent } from './projects/project-single/project-single.component';
+import { ProjectsService } from './projects/projects.service';
+import { Project } from './projects/project.model';
+import { LoadingComponent } from './loading/loading.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    RouterModule,
-    RouterOutlet,
-    RouterLink,
-    CommonModule,
-    FormsModule,
-    GoogleMapComponent,
-    ProjectSingleComponent
+    RouterModule, RouterOutlet, RouterLink,
+    CommonModule, NgIf, NgFor,
+    FormsModule, GoogleMapComponent,
+    LoadingComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnInit {
   title = 'portfolio';
   isSticky = false;
   headerHeight = 0;
@@ -28,9 +27,14 @@ export class AppComponent implements AfterViewInit {
   isMenuOpen = false;
   currentYear = new Date().getFullYear();
 
+  // recent projects setup
+  recentProjects: Project[] = [];
+  loading = true;
+  error: string | null = null;
+
   @ViewChild('siteHeader') siteHeader!: ElementRef;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private projectsService: ProjectsService) {}
 
   // Search functionality
   performSearch(event: Event) {
@@ -41,6 +45,24 @@ export class AppComponent implements AfterViewInit {
       });
       this.searchTerm = '';
     }
+  }
+
+  ngOnInit() {
+    this.loadRecentProjects();
+  }
+
+  private loadRecentProjects() {
+    this.projectsService.getProjects().subscribe({
+      next: (projects) => {
+        this.recentProjects = projects.slice(0, 5); // Get first 5 projects
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load recent projects';
+        this.loading = false;
+        console.error('Error loading projects:', err);
+      }
+    });
   }
 
   // Scroll handler

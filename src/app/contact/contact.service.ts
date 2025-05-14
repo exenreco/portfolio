@@ -3,18 +3,24 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Contact } from './contact.interface';
+import { env } from "../env/env";
+import { LoadingService } from '../loading/loading.service';
+import { finalize } from 'rxjs/operators';
+import { EnvDevelopmentMailer, EnvProductionMailer } from '../env/mailer.env';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContactService {
-  /**
-   * API endpoint for sending contact form data.
-   * Adjust the path or use environment configuration as needed.
-   */
-  private readonly apiUrl = '/api/mail/send';
+  /** Root URL for all project endpoints */
+  private apiRoot: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private loadingService: LoadingService) {
+    // Choose dev vs prod base URL at construction time
+    this.apiRoot = env.production
+      ? EnvProductionMailer.mailUrl
+      : EnvDevelopmentMailer.mailUrl;
+  }
 
   /**
    * Sends the contact payload to the backend mailing endpoint.
@@ -22,9 +28,11 @@ export class ContactService {
    * @returns An Observable that completes on success or errors.
    */
   sendEmail(contact: Contact): Observable<any> {
-    return this.http.post<any>(this.apiUrl, contact)
+    this.loadingService.show('Sending message...');
+    return this.http.post<any>(`${this.apiRoot}/api/mail/send`, contact)
       .pipe(
-        catchError(this.handleError)
+        catchError(this.handleError),
+        finalize(() => this.loadingService.hide())
       );
   }
 

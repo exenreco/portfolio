@@ -1,10 +1,25 @@
 # Portfolio
+<ul>
+  <li>This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.</li>
+  <li>This project utilizes express, cores and dotenv to enable fetching of projects and sending contact form.</li>
+  <li>This project utilizes google maps to show the area in which the developer resides.</li>
+  <li>This project utilizes concorently to start a backend server and the application.</li>
+</ul>
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.
 
-## Development server
+## Development servers
+<ul>
+  <li>
+    <strong>Start Application & Backend server</strong> - Run `start` for both the dev and backend server. Navigate to `http://localhost:4200/` for the application and `http://localhost:3000/` for the backend server.
+  </li>
+  <li>
+    <strong>Start Application Server Only</strong> - Run `start:angular` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+  </li>
+  <li>
+    <strong>Start Backend Server Only</strong> - Run `start:server` for the application backend dev server. Navigate to `http://localhost:3000/`.
+  </li>
+</ul>
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 

@@ -42,6 +42,10 @@
                   "with":    "src/app/env/env.prod.ts"
                 },
                 {
+                  "replace": "src/app/env/maps.env.ts",
+                  "with":    "src/app/env/maps.env.prod.ts"
+                },
+                {
                   "replace": "proxy.conf.json",
                   "with":    "proxy.conf.production.json"
                 }
@@ -109,7 +113,7 @@
             ],
             "scripts": [
               {
-                "input": "node_modules/@angular/google-maps/bundles/google-maps-api.umd.js",
+                "input": "node_modules/@angular/google-maps/fesm2022/google-maps.mjs",
                 "inject": true
               }
             ],

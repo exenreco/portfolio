@@ -188,7 +188,9 @@ import { RouterModule, RouterLink } from '@angular/router';
           <ul class="list primary">
             <li class="item">Email: <a href="mailto:exenreco19@yahoo.com">Exenreco19&#64;yahoo.com</a></li>
             <li class="item">Phone: <a href="tel:+14025155928">+1(402)515-5928</a></li>
-          </ul><br><br>
+            <li class="item">Contact Form: <a routerLink="/contact">form link</a></li>
+          </ul>
+          <br><br>
           <strong>I look forward to turning ideas into engaging, high-impact digital experiences!</strong>
         </section>
       </div>

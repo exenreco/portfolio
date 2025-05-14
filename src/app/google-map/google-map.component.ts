@@ -3,7 +3,7 @@ import { GoogleMap, MapAdvancedMarker } from '@angular/google-maps';
 import { NgFor, NgIf } from '@angular/common';
 import { Marker } from './interface';
 import { Loader } from '@googlemaps/js-api-loader';
-import { environment } from './environment.prod';
+import { EnvGoogleMapsAPIKey } from '../env/maps.env';
 
 @Component({
   selector: 'app-google-map',
@@ -83,11 +83,28 @@ export class GoogleMapComponent implements OnInit {
 
   private async loadGoogleMaps() {
     // configure the loader
-    const loader = new Loader({
-      apiKey: environment.googleMapsApiKey,
-      version: 'weekly',       // or 'beta' when v4 features needed
-      libraries: ['places'],
+    const
+      loader = new Loader({
+        apiKey: EnvGoogleMapsAPIKey.ApiKey,
+        version: 'weekly',       // or 'beta' when v4 features needed
+        libraries: ['places'],
+      }),
+
+      // build URL and append loading=async
+      base = (loader as any).createUrl?.() || `https://maps.googleapis.com/maps/api/js`,
+      url  = `${base}&loading=async`
+    ;
+
+    await new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src   = url;
+      script.async = true;
+      script.defer = true;
+      script.onload  = () => resolve();
+      script.onerror = (e) => reject(e);
+      document.head.appendChild(script);
     });
+
     // actually injects the <script> and resolves when global `google` is ready
     await loader.importLibrary("core");
   }
